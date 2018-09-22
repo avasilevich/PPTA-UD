@@ -7,40 +7,40 @@
 
 %%
 
--?[0-9]+			{ yylval = atoi(yytext); return NUMBER;        }
--?[0-9]+\.[0-9]+	{ yylval_double = atof(yytext); return NUMBER; }
+-?[0-9]+			{ yylval = atoi(yytext); return NUMBER;			}
+-?[0-9]+\.[0-9]+	{ yylval_double = atof(yytext); return NUMBER;	}
 
 "//".*                           	{ /* single-line comment */ }
 "/*"[^*]*[*]+([^*/][^*]*[*]+)*"/"	{ /* multi-line comment */  }
 
-Integer		{ return INTEGER; 	}
-Double		{ return DOUBLE; 	}
-String		{ return STRING; 	}
-void		{ return VOID; 		}
+Integer		{ return INTEGER;	}
+Double		{ return DOUBLE;	}
+String		{ return STRING;	}
+void		{ return VOID;		}
 
-package		{ return PACKAGE; 	}
-static		{ return STATIC; 	}
-class		{ return CLASS; 	}
-public		{ return PUBLIC;    }
-private		{ return PRIVATE;   }
-protected	{ return PROTECTED; }
+package		{ return PACKAGE;	}
+static		{ return STATIC;	}
+class		{ return CLASS;		}
+public		{ return PUBLIC;	}
+private		{ return PRIVATE;	}
+protected	{ return PROTECTED;	}
 
 if			{ return IF;		}
 else		{ return ELSE;		}
-for			{ return FOR; 		}
+for			{ return FOR;		}
 while		{ return WHILE;		}
 do			{ return DO;		}
 switch		{ return SWITCH;	}
 case		{ return CASE;		}
 default		{ return DEFAULT;	}
 
-"+"			{ return SUM; 		}
-"-"			{ return SUB; 		}
-"*"			{ return MUL; 		}
-"/"			{ return DIV;		}
+"+"			{ return SUM;	}
+"-"			{ return SUB;	}
+"*"			{ return MUL;	}
+"/"			{ return DIV;	}
 
-"++"		{ return INCREMENT; }
-"--"		{ return DECREMENT; }
+"++"		{ return INCREMENT;	}
+"--"		{ return DECREMENT;	}
 
 "+="		{ return SUM_AND_EQUAL; }
 "-="		{ return SUB_AND_EQUAL; }
@@ -53,14 +53,14 @@ default		{ return DEFAULT;	}
 "!"			{ return NOT;		}
 
 "=="		{ return EQUALS;			}
-">="		{ return GREATER_OR_EQUALS; }
+">="		{ return GREATER_OR_EQUALS;	}
 "<="		{ return LESS_OR_EQUALS;	}
 "!="		{ return NOT_EQUALS;		}
 
 "&&"		{ return AND;	}
 "||"		{ return OR;	}
 
-"." 		{ return DOT;				}
+"."			{ return DOT;				}
 ","			{ return COMMA;				}
 ":"			{ return COLON;				}
 ";"			{ return SEMI_COLON;		}
