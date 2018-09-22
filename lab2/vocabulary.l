@@ -1,14 +1,12 @@
 %option noyywrap
 
 %{
-	int yylval;
-	int yylval_double;
+	#include "parser.tab.h"
 %}
 
 %%
 
--?[0-9]+			{ yylval = atoi(yytext); return NUMBER;			}
--?[0-9]+\.[0-9]+	{ yylval_double = atof(yytext); return NUMBER;	}
+-?[0-9]+(\.[0-9]+)?		{ yylval.num = atof(yytext); return NUMBER;	}
 
 "//".*                           	{ /* single-line comment */ }
 "/*"[^*]*[*]+([^*/][^*]*[*]+)*"/"	{ /* multi-line comment */  }
@@ -72,18 +70,3 @@ default		{ return DEFAULT;	}
 "]"			{ return RIGHT_SQUARE_BKT;	}
 
 %%
-
-main(argc, argv)
-int argc;
-char **argv;
-{
-	if(argc > 1) {
-  		if(!(yyin = fopen(argv[1], "r"))) {
-			perror(argv[1]);
-			return 1;
-		}
- 	}
-
-	yylex();
-}
- 
