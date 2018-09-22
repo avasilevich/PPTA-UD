@@ -75,7 +75,7 @@ default		{ printf("operator '%s' was found at line #%d and column #%d\n", yytext
 "["			{ printf("left square bkt '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 "]"			{ printf("right square bkt '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 
-[a-zA-Z0-9]+\(\) { printf("functon '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);       }
+[a-zA-Z0-9]+\(\) { printf("function '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);       }
 [a-zA-Z0-9]+     { printf("token '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 
 \n	{ yycolno = 1; }
@@ -96,4 +96,3 @@ char **argv;
 
 	yylex();
 }
- 

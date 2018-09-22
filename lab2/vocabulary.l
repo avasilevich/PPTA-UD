@@ -1,11 +1,14 @@
 %option noyywrap
+%option debug
 
 %{
 	#include "parser.tab.h"
+	#include "./custom/helpers.h"
 %}
 
 %%
 
+[ \t]
 -?[0-9]+(\.[0-9]+)?		{ yylval.num = atof(yytext); return NUMBER;	}
 
 "//".*                           	{ /* single-line comment */ }
@@ -36,6 +39,7 @@ default		{ return DEFAULT;	}
 "-"			{ return SUB;	}
 "*"			{ return MUL;	}
 "/"			{ return DIV;	}
+"="			{ return ASSIGN;	}
 
 "++"		{ return INCREMENT;	}
 "--"		{ return DECREMENT;	}
@@ -45,7 +49,6 @@ default		{ return DEFAULT;	}
 "*="		{ return MUL_AND_EQUAL; }
 "/="		{ return DIV_AND_EQUAL; }
 
-"="			{ return ASSIGN;	}
 ">"			{ return GREATER;	}
 "<"			{ return LESS;		}
 "!"			{ return NOT;		}
@@ -60,13 +63,21 @@ default		{ return DEFAULT;	}
 
 "."			{ return DOT;				}
 ","			{ return COMMA;				}
+
 ":"			{ return COLON;				}
 ";"			{ return SEMI_COLON;		}
+
 "("			{ return LEFT_BKT;			}
 ")"			{ return RIGHT_BKT;			}
+
 "{"			{ return LEFT_BRACE;		}
 "}"			{ return RIGHT_BRACE;		}
+
 "["			{ return LEFT_SQUARE_BKT;	}
 "]"			{ return RIGHT_SQUARE_BKT;	}
+
+[a-zA-Z0-9]+	{ yylval.index = addNewVariable(yytext); return VARIABLE; /* add validation for existing variable name */ }
+[\n]			{ return EOL; }
+.				{ yyerror("Undefined symbol"); exit(1); }
 
 %%
