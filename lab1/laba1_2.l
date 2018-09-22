@@ -11,64 +11,75 @@
 %}
 
 %%
--?[0-9]+         { yylval = atoi(yytext); printf("NUMBER %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
--?[0-9]+\.[0-9]+ { yylval_double = atof(yytext); printf("NUMBER %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
-"//"+[^\n]*      { printf("SINGLE-LINE COMMENT %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);}
-"/*"[\w\s]*"*/"  { printf("MULTI-LINE COMMENT %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);  }
+-?[0-9]+			{ yylval = atoi(yytext); printf("number '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);        }
+-?[0-9]+\.[0-9]+	{ yylval_double = atof(yytext); printf("doule number '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 
-Integer		{ printf("%s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);  }
-Double		{ printf("%s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);  }
-String		{ printf("%s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);  }
-void		{ printf("%s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);  }
+"//".*                           	{ printf("comment '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);            }
+"/*"[^*]*[*]+([^*/][^*]*[*]+)*"/"	{ printf("multi-line comment '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 
-func		{ printf("FUNCTION %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
-import		{ printf("IMPORT %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
-static		{ printf("STATIC %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
-class		{ printf("CLASS %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
-public		{ printf("MODIFICATOR %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
-private		{ printf("MODIFICATOR %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+Integer		{ printf("type '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+Double		{ printf("type '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+String		{ printf("type '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+void		{ printf("type '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 
-"-"		{ printf("SUB %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
-"+"		{ printf("SUM %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
-"*"		{ printf("MUL %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
-"/"		{ printf("DIV %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+package		{ printf("%s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+static		{ printf("%s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+class		{ printf("%s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+public		{ printf("modificator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+private		{ printf("modificator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+protected	{ printf("modificator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 
-"++"		{ printf("INCREMENT %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
-"--"		{ printf("DECREMENT %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+if			{ printf("condition '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+else		{ printf("condition '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+for			{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+while		{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+do			{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+switch		{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+case		{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+default		{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 
-"+="		{ printf("SUM_AND_EQUAL %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
-"-="		{ printf("SUB_AND_EQUAL %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
-"*="		{ printf("MUL_AND_EQUAL %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
-"/="		{ printf("DIV_AND_EQUAL %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"-"			{ printf("sub '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"+"			{ printf("sum '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"*"			{ printf("mul '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"/"			{ printf("div '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 
-"="		{ printf("EQUALS %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);  }
-">"		{ printf("GREATER %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
-"<"		{ printf("LESS %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);    }
-"!"		{ printf("NOT %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);     }
+"++"		{ printf("increment '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"--"		{ printf("decrement '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 
-"=="		{ printf("EQUALS %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);	         }
-">="		{ printf("GREATER_OR_EQUALS %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
-"<="		{ printf("LESS_OR_EQUALS %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);    }
-"!="		{ printf("NOT_EQUALS %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);	 }
+"+="		{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"-="		{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"*="		{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"/="		{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 
-"&&"		{ printf("AND_OPERATOR %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
-"||"		{ printf("OR_OPERATOR %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);  }
+"="			{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+">"			{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"<"			{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"!"			{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 
-"." 		{ printf("DOT %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);             }
-","		{ printf("COMMA %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);            }
-":"		{ printf("COLON %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);            }
-";"		{ printf("SEMICOLON %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);        }
-"("		{ printf("LEFT_BKT %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);         }
-")"		{ printf("RIGHT_BKT %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);        }
-"{"		{ printf("LEFT_BRACE %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);       }
-"}"		{ printf("RIGHT_BRAC %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);       }
-"["		{ printf("LEFT_SQUARE_BKT %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);  }
-"]"		{ printf("RIGHT_SQUARE_BKT %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"=="		{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+">="		{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"<="		{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"!="		{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 
-[a-zA-Z0-9]+\(\) { printf("FUNCTION NAME %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);  }
-[a-zA-Z0-9]+     { printf("VARIABLE NAME %s was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);  }
-\n	             { yycolno = 1; }
-.		         { printf("SYMBOL '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);            }
+"&&"		{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"||"		{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+
+"." 		{ printf("dot '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+","			{ printf("comma '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+":"			{ printf("colon '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+";"			{ printf("semicolon '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"("			{ printf("left bkt '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+")"			{ printf("right bkt '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"{"			{ printf("left brace '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"}"			{ printf("right brace '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"["			{ printf("left square bkt '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+"]"			{ printf("right square bkt '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+
+[a-zA-Z0-9]+\(\) { printf("functon '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext);       }
+[a-zA-Z0-9]+     { printf("token '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+
+\n	{ yycolno = 1; }
+.	{ printf("token '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 
 %%
 
