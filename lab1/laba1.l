@@ -7,7 +7,7 @@
 	int yylval;
 	int yylval_double;
 
-    int yycolno = 1;
+	int yycolno = 1;
 %}
 
 %%
@@ -29,7 +29,7 @@ public		{ printf("modificator '%s' was found at line #%d and column #%d\n", yyte
 private		{ printf("modificator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 protected	{ printf("modificator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 
-if			{ printf("condition '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
+if 			{ printf("condition '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 else		{ printf("condition '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 for			{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
 while		{ printf("operator '%s' was found at line #%d and column #%d\n", yytext, yylineno, yycolno); yycolno += strlen(yytext); }
