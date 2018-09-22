@@ -8,4 +8,5 @@
 ### Laba 2
 1. bison -d parser.y
 2. flex vocabulary.l
-3. gcc parser.tab.c lex.yy.c -lm
+3. gcc parser.tab.c lex.yy.c -lm -lfl
+4. ./a.out sample.java
