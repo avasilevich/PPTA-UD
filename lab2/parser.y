@@ -9,6 +9,7 @@
 
 	std::map<std::string, double> vars;   // map from variable name to value
 	std::string package_name;
+	std::string class_name;
 
 	/* flex functions */
 	extern int yylex(void);
@@ -54,11 +55,17 @@
 %type <double_val> subexp;
 %type <double_val> lowerexp;
 
-%start parsetree
+%start parse_tree
 
 %%
 
-parsetree:		package lines;
+parse_tree:		package class_stmt;
+
+class_stmt:		  PUBLIC sub_class_stmt
+				| sub_class_stmt
+				;
+
+sub_class_stmt:	CLASS VARIABLE LEFT_BRACE lines RIGHT_BRACE  { class_name = *$2; };
 
 lines:			  lines line 
 				| line
@@ -117,8 +124,4 @@ void Div0Error(void) {
 
 void UnknownVarError(std::string s) {
 	printf("Error: %s does not exist!\n", s.c_str()); exit(1);
-}
-
-void ThrowError(std::string s) {
-	printf("%s\n", s.c_str()); exit(1);
 }

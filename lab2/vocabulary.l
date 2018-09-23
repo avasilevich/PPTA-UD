@@ -76,6 +76,6 @@ byte|short|int|long|float|double|char|String|bool|void	{ yylval.str_val = new st
 
 [a-zA-Z0-9]+		{ yylval.str_val = new std::string(yytext); return VARIABLE; 		}
 [a-zA-Z0-9._]+		{ yylval.str_val = new std::string(yytext); return PACKAGE_NAME; 	}
-.					{ ThrowError("Undefined symbol"); }
+.					{ yyerror("Undefined symbol"); }
 
 %%

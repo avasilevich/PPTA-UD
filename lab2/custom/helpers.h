@@ -23,7 +23,7 @@ int addNewVariable(char* varName)
 
 void yyerror(const char *s)
 {
-	printf("ERROR: %s\n", s);
+	printf("%s\n", s); exit(1);
 }
 
 #endif
