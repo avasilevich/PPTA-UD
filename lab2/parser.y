@@ -7,22 +7,19 @@
 	#include <map>
 	#include "parser.tab.h"
 
-	std::map<std::string, double> vars;   // map from variable name to value
+	std::map<std::string, double> vars;
 	std::string package_name;
 	std::string class_name;
 
-	/* flex functions */
 	extern int yylex();
-	extern void yyterminate();
+	extern void yyerror(const char *s);
 
 	void DivZeroError();
 	void UnknownVarError(std::string s);
-	void yyerror(const char *s);
 
 	extern FILE* yyin;
 %}
 
-/* %union is used to specify a variety of data types. */
 %union {
 	int     int_val;
 	double  double_val;
