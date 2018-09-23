@@ -32,7 +32,6 @@
 
 /* delcare tokens */
 %token<double_val> NUMBER
-%token<bool_val> BOOLEAN
 %token<str_val> VARIABLE PACKAGE_NAME PRINT
 %token<int_val> ADD SUB DIV MUL ASSIGN
 %token<int_val> LEFT_BKT RIGHT_BKT
@@ -43,6 +42,7 @@
 %token<int_val> EOL
 
 %token<int_val> INCREMENT DECREMENT
+%token<bool_val> BOOLEAN
 %token<int_val> SUM_AND_EQUAL SUB_AND_EQUAL MUL_AND_EQUAL DIV_AND_EQUAL
 %token<int_val> GREATER LESS NOT
 %token<int_val> EQUALS GREATER_OR_EQUALS LESS_OR_EQUALS NOT_EQUALS
