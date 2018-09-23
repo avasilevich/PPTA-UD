@@ -1,19 +1,19 @@
 package package_name;
 
 public class ClassName {
-	int first = 10 + (1 - 1);
-	int second = first - 1;
 
-	System.out.println(first);
-	System.out.println(second);
+	public int first = 10 + (1 - 1);
+	private int second = first - 1;
+
+	int third = first + 8;
 
 	private void fisrtFunc() {
-		int third = second;
-		System.out.println(third);
+		int fourth = second;
+		System.out.println(fourth);
 	}
 
-	public void fisrtFunc() {
-		int third = second;
-		System.out.println(third);
+	void secondFunc() {
+		int five = first + second;
+		System.out.println(five);
 	}
 }

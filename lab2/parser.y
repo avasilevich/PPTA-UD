@@ -73,17 +73,25 @@ lines:			| lines line
 				;
 
 line:			/* empty */
-				| common_line
-				| func_definition
+				| class_var_declaration
+				| func_declaration
 				;
 
-common_line:	| var_declaration
+class_var_declaration:	  MODIFICATOR TYPE assignment
+						| TYPE assignment
+						;
+
+common_line:	  var_declaration
 				| print_stmt
 				;			
 
-func_definition:	MODIFICATOR TYPE VARIABLE LEFT_BKT RIGHT_BKT LEFT_BRACE func_sub_def RIGHT_BRACE;
+func_declaration:	  MODIFICATOR func_sub_def
+					| func_sub_def
+					;
 
-func_sub_def:	| func_sub_def common_line
+func_sub_def: 	TYPE VARIABLE LEFT_BKT RIGHT_BKT LEFT_BRACE func_lines RIGHT_BRACE
+
+func_lines:		| func_lines common_line
 				| common_line
 				;
 

@@ -15,7 +15,7 @@
 "//".*                           	; /* single-line comment */ 
 "/*"[^*]*[*]+([^*/][^*]*[*]+)*"/"	; /* multi-line comment */  
 
-static|public|protected|private 							{ yylval.str_val = new std::string(yytext); return MODIFICATOR; }
+public|protected|private 									{ yylval.str_val = new std::string(yytext); return MODIFICATOR; }
 byte|short|int|long|float|double|char|String|boolean|void	{ yylval.str_val = new std::string(yytext); return TYPE;		}
 -?[0-9]+(\.[0-9]+)?											{ yylval.double_val = atof(yytext); return NUMBER;				}
 
