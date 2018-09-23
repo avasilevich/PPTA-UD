@@ -2,82 +2,80 @@
 %option debug
 
 %{
+	#include <cstdio>
+	#include <string>
+	
 	#include "parser.tab.h"
 	#include "./custom/helpers.h"
 %}
 
 %%
 
-[ \t]
--?[0-9]+(\.[0-9]+)?		{ yylval.num = atof(yytext); return NUMBER;	}
+[ \t\n]+							; /* do nothing */
+"//".*                           	; /* single-line comment */ 
+"/*"[^*]*[*]+([^*/][^*]*[*]+)*"/"	; /* multi-line comment */  
 
-"//".*                           	{ /* single-line comment */ }
-"/*"[^*]*[*]+([^*/][^*]*[*]+)*"/"	{ /* multi-line comment */  }
+byte|short|int|long|float|double|char|String|bool|void	{ yylval.str_val = new std::string(yytext); return TYPE;	}
+-?[0-9]+(\.[0-9]+)?										{ yylval.double_val = atof(yytext); return NUMBER;			}
 
-Integer		{ return INTEGER;	}
-Double		{ return DOUBLE;	}
-String		{ return STRING;	}
-void		{ return VOID;		}
 
-package		{ return PACKAGE;	}
-static		{ return STATIC;	}
-class		{ return CLASS;		}
-public		{ return PUBLIC;	}
-private		{ return PRIVATE;	}
-protected	{ return PROTECTED;	}
+"true"		{ yylval.bool_val = true; return BOOLEAN;	}
+"false"		{ yylval.bool_val = false; return BOOLEAN;	}
 
-if			{ return IF;		}
-else		{ return ELSE;		}
-for			{ return FOR;		}
-while		{ return WHILE;		}
-do			{ return DO;		}
-switch		{ return SWITCH;	}
-case		{ return CASE;		}
-default		{ return DEFAULT;	}
+"System.out.println"   return PRINT;
 
-"+"			{ return SUM;	}
-"-"			{ return SUB;	}
-"*"			{ return MUL;	}
-"/"			{ return DIV;	}
-"="			{ return ASSIGN;	}
+"package"	return PACKAGE;
+"static"	return STATIC;
+"class"		return CLASS;
+"public"	return PUBLIC;
+"private"	return PRIVATE;
+"protected"	return PROTECTED;
 
-"++"		{ return INCREMENT;	}
-"--"		{ return DECREMENT;	}
+"if"		return IF;
+"else"		return ELSE;
+"for"		return FOR;
+"while"		return WHILE;
 
-"+="		{ return SUM_AND_EQUAL; }
-"-="		{ return SUB_AND_EQUAL; }
-"*="		{ return MUL_AND_EQUAL; }
-"/="		{ return DIV_AND_EQUAL; }
+"+"			return ADD;
+"-"			return SUB;
+"*"			return MUL;
+"/"			return DIV;
+"="			return ASSIGN;
 
-">"			{ return GREATER;	}
-"<"			{ return LESS;		}
-"!"			{ return NOT;		}
+"++"		return INCREMENT;
+"--"		return DECREMENT;
 
-"=="		{ return EQUALS;			}
-">="		{ return GREATER_OR_EQUALS;	}
-"<="		{ return LESS_OR_EQUALS;	}
-"!="		{ return NOT_EQUALS;		}
+"+="		return SUM_AND_EQUAL;
+"-="		return SUB_AND_EQUAL;
+"*="		return MUL_AND_EQUAL;
+"/="		return DIV_AND_EQUAL;
 
-"&&"		{ return AND;	}
-"||"		{ return OR;	}
+">"			return GREATER;
+"<"			return LESS;
+"!"			return NOT;
 
-"."			{ return DOT;				}
-","			{ return COMMA;				}
+"=="		return EQUALS;
+">="		return GREATER_OR_EQUALS;
+"<="		return LESS_OR_EQUALS;
+"!="		return NOT_EQUALS;
 
-":"			{ return COLON;				}
-";"			{ return SEMI_COLON;		}
+"&&"		return AND;
+"||"		return OR;
 
-"("			{ return LEFT_BKT;			}
-")"			{ return RIGHT_BKT;			}
+"."			return DOT;
+","			return COMMA;
 
-"{"			{ return LEFT_BRACE;		}
-"}"			{ return RIGHT_BRACE;		}
+":"			return COLON;
+";"			return SEMI_COLON;
+"("			return LEFT_BKT;
+")"			return RIGHT_BKT;
+"{"			return LEFT_BRACE;
+"}"			return RIGHT_BRACE;
+"["			return LEFT_SQUARE_BKT;
+"]"			return RIGHT_SQUARE_BKT;
 
-"["			{ return LEFT_SQUARE_BKT;	}
-"]"			{ return RIGHT_SQUARE_BKT;	}
-
-[a-zA-Z0-9]+	{ yylval.index = addNewVariable(yytext); return VARIABLE; /* add validation for existing variable name */ }
-[\n]			{ return EOL; }
-.				{ yyerror("Undefined symbol"); exit(1); }
+[a-zA-Z0-9]+			{ yylval.str_val = new std::string(yytext); return VARIABLE; 		}
+[a-zA-Z0-9._]+			{ yylval.str_val = new std::string(yytext); return PACKAGE_NAME; 	}
+.						{ yyerror("Undefined symbol"); exit(1); }
 
 %%

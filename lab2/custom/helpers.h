@@ -21,4 +21,9 @@ int addNewVariable(char* varName)
 	return x;
 }
 
+void yyerror(const char *s)
+{
+	printf("ERROR: %s\n", s);
+}
+
 #endif
