@@ -15,9 +15,9 @@
 "//".*                           	; /* single-line comment */ 
 "/*"[^*]*[*]+([^*/][^*]*[*]+)*"/"	; /* multi-line comment */  
 
-byte|short|int|long|float|double|char|String|bool|void	{ yylval.str_val = new std::string(yytext); return TYPE;	}
--?[0-9]+(\.[0-9]+)?										{ yylval.double_val = atof(yytext); return NUMBER;			}
-
+static|public|protected|private 							{ yylval.str_val = new std::string(yytext); return MODIFICATOR; }
+byte|short|int|long|float|double|char|String|boolean|void	{ yylval.str_val = new std::string(yytext); return TYPE;		}
+-?[0-9]+(\.[0-9]+)?											{ yylval.double_val = atof(yytext); return NUMBER;				}
 
 "true"		{ yylval.bool_val = true; return BOOLEAN;	}
 "false"		{ yylval.bool_val = false; return BOOLEAN;	}
@@ -25,11 +25,7 @@ byte|short|int|long|float|double|char|String|bool|void	{ yylval.str_val = new st
 "System.out.println"   return PRINT;
 
 "package"	return PACKAGE;
-"static"	return STATIC;
 "class"		return CLASS;
-"public"	return PUBLIC;
-"private"	return PRIVATE;
-"protected"	return PROTECTED;
 
 "if"		return IF;
 "else"		return ELSE;

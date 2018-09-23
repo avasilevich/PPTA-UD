@@ -6,4 +6,14 @@ public class ClassName {
 
 	System.out.println(first);
 	System.out.println(second);
+
+	private void fisrtFunc() {
+		int third = second;
+		System.out.println(third);
+	}
+
+	public void fisrtFunc() {
+		int third = second;
+		System.out.println(third);
+	}
 }

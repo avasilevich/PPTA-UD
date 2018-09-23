@@ -36,8 +36,9 @@
 %token<str_val> VARIABLE PACKAGE_NAME PRINT
 %token<int_val> ADD SUB DIV MUL ASSIGN
 %token<int_val> LEFT_BKT RIGHT_BKT
-%token<int_val> PUBLIC PROTECTED PRIVATE
-%token<int_val> PACKAGE CLASS STATIC
+%token<str_val> MODIFICATOR
+
+%token<int_val> PACKAGE CLASS
 %token<int_val> INCREMENT DECREMENT
 %token<int_val> SUM_AND_EQUAL SUB_AND_EQUAL MUL_AND_EQUAL DIV_AND_EQUAL
 %token<int_val> GREATER LESS NOT
@@ -61,24 +62,34 @@
 
 parse_tree:		package class_stmt;
 
-class_stmt:		  PUBLIC sub_class_stmt
-				| sub_class_stmt
+class_stmt:		  MODIFICATOR class_sub_stmt
+				| class_sub_stmt
 				;
 
-sub_class_stmt:	CLASS VARIABLE LEFT_BRACE lines RIGHT_BRACE  { class_name = *$2; };
+class_sub_stmt:		CLASS VARIABLE LEFT_BRACE lines RIGHT_BRACE  { class_name = *$2; };
 
-lines:			  lines line 
+lines:			| lines line
 				| line
 				;
 
 line:			/* empty */
-				| declaration
-				| print_stmt
-				;	
-
-declaration:	  TYPE assignment
-				| assignment
+				| common_line
+				| func_definition
 				;
+
+common_line:	| var_declaration
+				| print_stmt
+				;			
+
+func_definition:	MODIFICATOR TYPE VARIABLE LEFT_BKT RIGHT_BKT LEFT_BRACE func_sub_def RIGHT_BRACE;
+
+func_sub_def:	| func_sub_def common_line
+				| common_line
+				;
+
+var_declaration: 	  TYPE assignment
+					| assignment
+					;
 
 assignment:		VARIABLE ASSIGN exp declaration_end			{ vars[*$1] = $3; delete $1; };
 
