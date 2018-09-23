@@ -7,7 +7,7 @@ public class ClassName {
 
 	int third = first + 8;
 
-	private void fisrtFunc() {
+	private void firstFunc() {
 		int fourth = second;
 		System.out.println(fourth);
 	}
