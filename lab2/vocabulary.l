@@ -74,8 +74,8 @@ byte|short|int|long|float|double|char|String|bool|void	{ yylval.str_val = new st
 "["			return LEFT_SQUARE_BKT;
 "]"			return RIGHT_SQUARE_BKT;
 
-[a-zA-Z0-9]+			{ yylval.str_val = new std::string(yytext); return VARIABLE; 		}
-[a-zA-Z0-9._]+			{ yylval.str_val = new std::string(yytext); return PACKAGE_NAME; 	}
-.						{ yyerror("Undefined symbol"); exit(1); }
+[a-zA-Z0-9]+		{ yylval.str_val = new std::string(yytext); return VARIABLE; 		}
+[a-zA-Z0-9._]+		{ yylval.str_val = new std::string(yytext); return PACKAGE_NAME; 	}
+.					{ ThrowError("Undefined symbol"); }
 
 %%
