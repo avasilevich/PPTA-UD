@@ -134,9 +134,9 @@ int main(int argc, char **argv)
 /* Display error messages */
 
 void DivZeroError() {
-	printf("Error: division by zero\n"); exit(1);
+	printf("Error: division by zero\n");
 }
 
 void UnknownVarError(std::string s) {
-	printf("Error: %s does not exist!\n", s.c_str()); exit(1);
+	printf("Error: %s does not exist!\n", s.c_str());
 }

@@ -1,5 +1,5 @@
 %option noyywrap
-/*%option debug*/
+%option debug
 
 %{
 	#include <cstdio>
