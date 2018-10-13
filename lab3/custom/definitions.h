@@ -19,6 +19,7 @@ namespace YY_F {
 
 	struct OwnClass {
 		std::string name;
+		std::string package;
 		std::map<std::string, Variable> vars;
 		std::map<std::string, Method> methods;
 	};

@@ -37,8 +37,6 @@
 
 	extern FILE* yyin;
 
-	std::string package_name;
-
 	YY_F::OwnClass myClass;
 	YY_F::Variable tempVar;
 	YY_F::Method tMethod;
@@ -141,8 +139,8 @@ lowerexp:		  	  	  LEFT_BKT exp RIGHT_BKT					{ $$ = $2; }
 						| VARIABLE 									{ if(!isVariableInvalid(*$1)) $$ = getValueForVariable(*$1); }
 						;
 
-print_stmt:				  PRINT LEFT_BKT exp RIGHT_BKT SEMI_COLON	{ printf("%.2f\n", $3); };
-package:				  PACKAGE PACKAGE_NAME SEMI_COLON			{ package_name = *$2; 	};
+print_stmt:				  PRINT LEFT_BKT exp RIGHT_BKT SEMI_COLON	{ printf("%.2f\n", $3);  };
+package:				  PACKAGE PACKAGE_NAME SEMI_COLON			{ myClass.package = *$2; };
 
 declaration_end:		  SEMI_COLON;
 
@@ -218,7 +216,7 @@ void setMethodVarValue(std::string name, double value) {
 
 void printVar(YY_F::Variable var) {
 	std::cout << std::endl; 
-	std::cout << "+++++++++++ Variable info ++++++++++" << std::endl;
+	std::cout << "\n+++++++++++ Variable info ++++++++++" << std::endl;
 	std::cout << "+ name: " << var.name << std::endl;
 	std::cout << "+ modificator: " << var.modificator << std::endl;
 	std::cout << "+ type: " << var.type << std::endl;
@@ -228,18 +226,34 @@ void printVar(YY_F::Variable var) {
 
 void printMethod(YY_F::Method method) {
 	std::cout << std::endl; 
-	std::cout << "----------- Method info ----------" << std::endl;
+	std::cout << "\n----------- Method info ----------" << std::endl;
 	std::cout << "+ name: " << method.name << std::endl;
 	std::cout << "+ modificator: " << method.modificator << std::endl;
-	std::cout << "+ returnType: " << method.returnType << "\n" << std::endl;
-	std::cout << "+ vars count: " << method.vars.size() << std::endl;
+	std::cout << "+ returnType: " << method.returnType << std::endl;
+	std::cout << "+ vars (" << method.vars.size() << "): ";
+
+	for (std::map<std::string, YY_F::Variable>::iterator it = method.vars.begin(); it != method.vars.end(); ++it)
+    	std::cout << it->first << " | ";
+
+    std::cout << "\n" << std::endl;
 }
 
 void printClass() {
-	std::cout << "----------- Class info ----------" << std::endl;
+	std::cout << "\n----------- Class info ----------" << std::endl;
 	std::cout << "+ name: " << myClass.name << std::endl;
-	std::cout << "+ count of methods: " << myClass.methods.size() << std::endl;
-	std::cout << "+ count of vars: " << myClass.vars.size() << std::endl;
+	std::cout << "+ package: " << myClass.package << std::endl;
+
+	std::cout << "+ vars (" << myClass.vars.size() << "): ";
+	for (std::map<std::string, YY_F::Variable>::iterator it = myClass.vars.begin(); it != myClass.vars.end(); ++it)
+    	std::cout << it->first << " | ";
+
+    std::cout << std::endl;
+
+	std::cout << "+ methods (" << myClass.methods.size() << "): ";
+	for (std::map<std::string, YY_F::Method>::iterator it = myClass.methods.begin(); it != myClass.methods.end(); ++it)
+    	std::cout << it->first << " | ";
+   
+    std::cout << "\n" << std::endl;
 }
 
 void setClassName(std::string className) {
