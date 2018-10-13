@@ -8,5 +8,10 @@
 ### Laba 2
 1. bison -d parser.y
 2. flex vocabulary.l
-3. gcc parser.tab.c lex.yy.c -lm -lfl
+3. g++ parser.tab.c lex.yy.c -lm -lfl
 4. ./a.out ./samples/success.java || ./a.out ./samples/errors.java
+
+### Laba 3
+1. make all - compile
+2. make clean - clean output files
+3. ./a.out ./samples/success.java
