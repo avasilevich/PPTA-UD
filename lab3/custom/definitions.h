@@ -14,6 +14,7 @@ namespace YY_F {
 		std::string name;
 		std::string returnType;
 		std::string modificator;
+		std::map<std::string, Variable> vars;
 	};
 
 	struct OwnClass {

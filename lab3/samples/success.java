@@ -8,7 +8,7 @@ public class ClassName {
 	protected double nonInitVar;
 	int secondNonInitVar;
 
-	int third = first + 8;
+	int third = first + 8 - secondNonInitVar;
 
 	private void firstFunc() {
 		int fourth = second;

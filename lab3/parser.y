@@ -15,11 +15,21 @@
 
 	void addMethod();
 	void addClassVar(std::string name, std::string modificator, std::string type, double value, bool initizalized);
+	void addMethodVar(std::string name, std::string modificator, std::string type, double value, bool initizalized);
+	void setMethodVarValue(std::string name, double value);
+	
 	void setVarName(std::string varName);
 	void setClassName(std::string className);
+	
 	void printClass();
 	void printVar(YY_F::Variable var);
 	void printMethod(YY_F::Method method);
+
+	bool isClassVarExists(std::string varName);
+	bool isLocalMethodVarExists(std::string varName);
+	bool isVariableInvalid(std::string varName);
+
+	double getValueForVariable(std::string varName);
 
 	void DivZeroError();
 	void UnknownVarError(std::string s);
@@ -32,6 +42,8 @@
 	YY_F::OwnClass myClass;
 	YY_F::Variable tempVar;
 	YY_F::Method tMethod;
+
+	std::map<std::string, YY_F::Variable> localMethodVars;
 %}
 
 %union {
@@ -108,8 +120,8 @@ func_lines:				| func_lines common_line
 						| common_line
 						;
 
-var_declaration: 	  	  TYPE assignment
-						| assignment
+var_declaration: 	  	  TYPE assignment	{ addMethodVar(tempVar.name, "none", *$1, $2, tempVar.initizalized); }
+						| assignment		{ setMethodVarValue(tempVar.name, $1); }
 						;
 
 assignment:				  VARIABLE ASSIGN exp declaration_end		{ $$ = $3; tempVar.name = *$1; tempVar.initizalized = true; };
@@ -126,7 +138,7 @@ subexp:			  	  	  subexp MUL lowerexp						{ $$ = $1 * $3;										}
 
 lowerexp:		  	  	  LEFT_BKT exp RIGHT_BKT					{ $$ = $2; }
 						| NUMBER									{ $$ = $1; }
-						| VARIABLE 									{ if (!myClass.vars.count(*$1)) UnknownVarError(*$1); else if (!myClass.vars[*$1].initizalized) InitializationVarError(*$1); else $$ = myClass.vars[*$1].value; }
+						| VARIABLE 									{ if(!isVariableInvalid(*$1)) $$ = getValueForVariable(*$1); }
 						;
 
 print_stmt:				  PRINT LEFT_BKT exp RIGHT_BKT SEMI_COLON	{ printf("%.2f\n", $3); };
@@ -162,12 +174,10 @@ void InitializationVarError(std::string s) {
 	printf("Error: %s is not initizalized!\n", s.c_str());
 }
 
-void printClass() {
-	std::cout << "----------- Class info ----------" << std::endl;
-	std::cout << "+ name: " << myClass.name << std::endl;
-}
-
 void addMethod() {
+	tMethod.vars = localMethodVars;
+	localMethodVars.clear();
+	
 	myClass.methods.insert(std::pair<std::string,YY_F::Method>(tMethod.name, tMethod));
 	printMethod(tMethod);
 }
@@ -183,6 +193,27 @@ void addClassVar(std::string name, std::string modificator, std::string type, do
 
 	myClass.vars.insert(std::pair<std::string,YY_F::Variable>(var.name, var));
 	printVar(var);
+}
+
+void addMethodVar(std::string name, std::string modificator, std::string type, double value, bool initizalized) {
+	YY_F::Variable var;
+	
+	var.name = name;
+	var.modificator = modificator;
+	var.type = type;
+	var.value = value;
+	var.initizalized = initizalized;
+
+	localMethodVars.insert(std::pair<std::string,YY_F::Variable>(var.name, var));
+	printVar(var);
+}
+
+void setMethodVarValue(std::string name, double value) {
+	if (!isLocalMethodVarExists(name)) {
+		UnknownVarError(name);
+	} else {
+		localMethodVars[name].value = value;
+	}
 }
 
 void printVar(YY_F::Variable var) {
@@ -201,6 +232,14 @@ void printMethod(YY_F::Method method) {
 	std::cout << "+ name: " << method.name << std::endl;
 	std::cout << "+ modificator: " << method.modificator << std::endl;
 	std::cout << "+ returnType: " << method.returnType << "\n" << std::endl;
+	std::cout << "+ vars count: " << method.vars.size() << std::endl;
+}
+
+void printClass() {
+	std::cout << "----------- Class info ----------" << std::endl;
+	std::cout << "+ name: " << myClass.name << std::endl;
+	std::cout << "+ count of methods: " << myClass.methods.size() << std::endl;
+	std::cout << "+ count of vars: " << myClass.vars.size() << std::endl;
 }
 
 void setClassName(std::string className) {
@@ -209,4 +248,35 @@ void setClassName(std::string className) {
 
 void setVarName(std::string varName) {
 	tempVar.name = varName;
+}
+
+bool isClassVarExists(std::string varName) {
+	return myClass.vars.count(varName);
+}
+
+bool isLocalMethodVarExists(std::string varName) {
+	return localMethodVars.count(varName);
+}
+
+bool isVariableInvalid(std::string varName) {
+	if (!isClassVarExists(varName) && !isLocalMethodVarExists(varName)) {
+		UnknownVarError(varName);
+		return true;
+	} else if (isLocalMethodVarExists(varName) && !localMethodVars[varName].initizalized) {
+		InitializationVarError(varName);
+		return true;
+	} else if (isClassVarExists(varName) && !myClass.vars[varName].initizalized) {
+		InitializationVarError(varName);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+double getValueForVariable(std::string varName) {
+	if (isLocalMethodVarExists(varName)) {
+		return localMethodVars[varName].value;
+	} else {
+		return myClass.vars[varName].value;
+	}
 }
