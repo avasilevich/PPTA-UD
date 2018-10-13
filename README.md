@@ -12,6 +12,6 @@
 4. ./a.out ./samples/success.java || ./a.out ./samples/errors.java
 
 ### Laba 3
-1. make all - compile
-2. make clean - clean output files
-3. ./a.out ./samples/success.java
+1. `make all` - compile
+2. `make clean` - clean output files
+3. `./a.out ./samples/success.java` - check file
