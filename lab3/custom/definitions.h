@@ -10,9 +10,16 @@ namespace YY_F {
 		bool initizalized;
 	};
 
+	struct Method {
+		std::string name;
+		std::string returnType;
+		std::string modificator;
+	};
+
 	struct OwnClass {
 		std::string name;
 		std::map<std::string, Variable> vars;
+		std::map<std::string, Method> methods;
 	};
 }
 

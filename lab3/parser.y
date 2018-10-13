@@ -13,11 +13,13 @@
 	extern int yylex();
 	extern void yyerror(const char *s);
 
+	void addMethod();
 	void addClassVar(std::string name, std::string modificator, std::string type, double value, bool initizalized);
 	void setVarName(std::string varName);
 	void setClassName(std::string className);
 	void printClass();
 	void printVar(YY_F::Variable var);
+	void printMethod(YY_F::Method method);
 
 	void DivZeroError();
 	void UnknownVarError(std::string s);
@@ -29,6 +31,7 @@
 
 	YY_F::OwnClass myClass;
 	YY_F::Variable tempVar;
+	YY_F::Method tMethod;
 %}
 
 %union {
@@ -89,17 +92,17 @@ common_line:	  	  	  var_declaration
 						| print_stmt
 						;
 
-class_var_declaration:	  MODIFICATOR TYPE assignment				{ addClassVar(tempVar.name, *$1, *$2, $3, tempVar.initizalized); }
-						| TYPE assignment							{ addClassVar(tempVar.name, "private", *$1, $2, tempVar.initizalized); }
-						| MODIFICATOR TYPE VARIABLE declaration_end { addClassVar(*$3, *$1, *$2, 0, false); }
-						| TYPE VARIABLE declaration_end 			{ addClassVar(*$2, "private", *$1, 0, false); }
+class_var_declaration:	  MODIFICATOR TYPE assignment				{ addClassVar(tempVar.name, *$1, *$2, $3, tempVar.initizalized); 		}
+						| TYPE assignment							{ addClassVar(tempVar.name, "private", *$1, $2, tempVar.initizalized); 	}
+						| MODIFICATOR TYPE VARIABLE declaration_end { addClassVar(*$3, *$1, *$2, 0, false); 		}
+						| TYPE VARIABLE declaration_end 			{ addClassVar(*$2, "private", *$1, 0, false); 	}
 						;
 
-func_declaration:	  	  MODIFICATOR func_sub_def
-						| func_sub_def
+func_declaration:	  	  MODIFICATOR func_sub_def	{ tMethod.modificator = *$1; addMethod(); 			}
+						| func_sub_def				{ tMethod.modificator = "private"; addMethod(); 	}
 						;
 
-func_sub_def: 			  TYPE VARIABLE LEFT_BKT RIGHT_BKT LEFT_BRACE func_lines RIGHT_BRACE;
+func_sub_def: 			  TYPE VARIABLE LEFT_BKT RIGHT_BKT LEFT_BRACE func_lines RIGHT_BRACE { tMethod.returnType = *$1; tMethod.name = *$2; };
 
 func_lines:				| func_lines common_line
 						| common_line
@@ -164,13 +167,9 @@ void printClass() {
 	std::cout << "+ name: " << myClass.name << std::endl;
 }
 
-void printVar(YY_F::Variable var) {
-	std::cout << "----------- Variable info ----------" << std::endl;
-	std::cout << "+ name: " << var.name << std::endl;
-	std::cout << "+ modificator: " << var.modificator << std::endl;
-	std::cout << "+ type: " << var.type << std::endl;
-	std::cout << "+ value: " << var.value << std::endl;
-	std::cout << "+ initizalized: " << (var.initizalized ? "yes" : "no") << std::endl;
+void addMethod() {
+	myClass.methods.insert(std::pair<std::string,YY_F::Method>(tMethod.name, tMethod));
+	printMethod(tMethod);
 }
 
 void addClassVar(std::string name, std::string modificator, std::string type, double value, bool initizalized) {
@@ -186,6 +185,23 @@ void addClassVar(std::string name, std::string modificator, std::string type, do
 	printVar(var);
 }
 
+void printVar(YY_F::Variable var) {
+	std::cout << std::endl; 
+	std::cout << "+++++++++++ Variable info ++++++++++" << std::endl;
+	std::cout << "+ name: " << var.name << std::endl;
+	std::cout << "+ modificator: " << var.modificator << std::endl;
+	std::cout << "+ type: " << var.type << std::endl;
+	std::cout << "+ value: " << var.value << std::endl;
+	std::cout << "+ initizalized: " << (var.initizalized ? "yes" : "no") << "\n" << std::endl;
+}
+
+void printMethod(YY_F::Method method) {
+	std::cout << std::endl; 
+	std::cout << "----------- Method info ----------" << std::endl;
+	std::cout << "+ name: " << method.name << std::endl;
+	std::cout << "+ modificator: " << method.modificator << std::endl;
+	std::cout << "+ returnType: " << method.returnType << "\n" << std::endl;
+}
 
 void setClassName(std::string className) {
 	myClass.name = className;
