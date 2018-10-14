@@ -13,17 +13,14 @@ public class ClassName {
 	private void firstFunc() {
 		int fourth = second;
 		int a = 1;
-		int c;
-		c = 1;
-		int k = c;
+		int b = 1;
+		int c = 99;
 
-		// if(a != b) {
-		// 	c = 1000;
-		// } else {
+		if(a != b) {
+			c = 88;
+		} 
 
-		// }
-
-		System.out.println(fourth);
+		System.out.println(c);
 	}
 
 	int secondFunc() {

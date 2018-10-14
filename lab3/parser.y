@@ -112,6 +112,7 @@ line:					| class_var_declaration
 						;
 
 common_line:	  	  	  var_declaration
+						| if_stmt
 						| print_stmt
 						;
 
@@ -181,6 +182,18 @@ condition:				  exp GT exp 	{ $$ = $1 > $3;	 }
 						| exp EQ exp 	{ $$ = $1 == $3; }
 						| exp NEQ exp 	{ $$ = $1 != $3; }
 						;
+
+if:						  IF LEFT_BKT condition RIGHT_BKT LEFT_BRACE func_lines RIGHT_BRACE	{ std::cout << "---------------------------------------------" << $3 << std::endl;  if($3) { $5; } };
+
+if_else:				  if ELSE LEFT_BRACE func_lines RIGHT_BRACE { if(true) { $3; } };
+
+else_if:				  ELSE if;
+
+if_stmt:				  if
+       					| if_else
+        				| if else_if
+        				;
+
 
 print_stmt:				  PRINT LEFT_BKT exp RIGHT_BKT declaration_end	{ printData($3); /*printf("%.2f\n", $3);*/  };
 package:				  PACKAGE PACKAGE_NAME declaration_end			{ myClass.package = *$2; };
