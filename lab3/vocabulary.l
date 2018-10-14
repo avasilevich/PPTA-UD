@@ -49,14 +49,14 @@ byte|short|int|long|float|double|char|String|boolean|void	{ yylval.str_val = new
 "*="		return MUL_AND_EQUAL;
 "/="		return DIV_AND_EQUAL;
 
-">"			return GREATER;
-"<"			return LESS;
 "!"			return NOT;
 
-"=="		return EQUALS;
-">="		return GREATER_OR_EQUALS;
-"<="		return LESS_OR_EQUALS;
-"!="		return NOT_EQUALS;
+">"			return GT;
+"<"			return ST;
+"=="		return EQ;
+">="		return GTE;
+"<="		return STE;
+"!="		return NEQ;
 
 "&&"		return AND;
 "||"		return OR;

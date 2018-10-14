@@ -12,6 +12,17 @@ public class ClassName {
 
 	private void firstFunc() {
 		int fourth = second;
+		int a = 1;
+		int c;
+		c = 1;
+		int k = c;
+
+		// if(a != b) {
+		// 	c = 1000;
+		// } else {
+
+		// }
+
 		System.out.println(fourth);
 	}
 

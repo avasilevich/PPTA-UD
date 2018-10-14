@@ -68,14 +68,13 @@
 %token<int_val> PACKAGE CLASS
 %token<int_val> LEFT_BRACE RIGHT_BRACE
 %token<int_val> COLON SEMI_COLON
+%token<int_val> GT ST EQ NEQ GTE STE 
+%token<int_val> AND OR NOT
+%token<bool_val> BOOLEAN
 %token<int_val> EOL
 
-%token<bool_val> BOOLEAN
 %token<int_val> INCREMENT DECREMENT
 %token<int_val> SUM_AND_EQUAL SUB_AND_EQUAL MUL_AND_EQUAL DIV_AND_EQUAL
-%token<int_val> GREATER LESS NOT
-%token<int_val> EQUALS GREATER_OR_EQUALS LESS_OR_EQUALS NOT_EQUALS
-%token<int_val> AND OR
 %token<int_val> COMMA
 %token<int_val> LEFT_SQUARE_BKT RIGHT_SQUARE_BKT
 
@@ -86,6 +85,11 @@
 %type <double_val> lowerexp;
 %type <double_val> assignment;
 %type <double_val> return_action;
+
+%type <bool_val> bool_exp;
+%type <bool_val> bool_inner;
+%type <bool_val> bool_subinner;
+%type <bool_val> condition;
 
 %start parse_tree
 
@@ -132,8 +136,9 @@ func_lines:				| func_lines common_line
 						| common_line
 						;
 
-var_declaration: 	  	  TYPE assignment	{ addMethodVar(tempVar.name, "none", *$1, $2, tempVar.initizalized); }
-						| assignment		{ setMethodVarValue(tempVar.name, $1); }
+var_declaration: 	  	  TYPE assignment				{ addMethodVar(tempVar.name, "none", *$1, $2, tempVar.initizalized); }
+						| assignment					{ setMethodVarValue(tempVar.name, $1); }
+						| TYPE VARIABLE declaration_end	{ addMethodVar(*$2, "none", *$1, 0, false); }
 						;
 
 assignment:				  VARIABLE ASSIGN exp declaration_end		{ $$ = $3; tempVar.name = *$1; tempVar.initizalized = true; };
@@ -141,6 +146,7 @@ assignment:				  VARIABLE ASSIGN exp declaration_end		{ $$ = $3; tempVar.name = 
 exp:			  	  	  exp ADD subexp	               			{ $$ = $1 + $3; }
  						| exp SUB subexp							{ $$ = $1 - $3; }
  						| subexp									{ $$ = $1; 		}
+ 						| bool_exp									{ $$ = $1; 		}
  						;
 
 subexp:			  	  	  subexp MUL lowerexp						{ $$ = $1 * $3;										}		
@@ -152,6 +158,28 @@ lowerexp:		  	  	  LEFT_BKT exp RIGHT_BKT									{ $$ = $2; }
 						| NUMBER													{ $$ = $1; }
 						| VARIABLE 													{ if(!isVariableInvalid(*$1)) $$ = getValueForVariable(*$1); }
 						| FUNC_CALL VARIABLE LEFT_BKT RIGHT_BKT						{ if(isNonVoidMethodExists(*$2)) $$ = getReturnedValueOfMethod(*$2); }
+						;
+
+bool_exp:   			  NOT bool_exp         		{ $$ = !$2;		 }
+				        | bool_exp AND bool_inner 	{ $$ = $1 && $3; }
+				        | bool_inner               	{ $$ = $1; 		 }
+				        ;
+
+bool_inner:   			  bool_inner OR bool_subinner   	{ $$ = $1 || $3; }
+           				| bool_subinner            			{ $$ = $1;   	 }
+           				;
+
+bool_subinner: 			  BOOLEAN                   	{ $$ = $1; }
+          				| condition                		{ $$ = $1; }
+          				| LEFT_BKT bool_exp RIGHT_BKT	{ $$ = $2; }
+          				; /* Expand an expression within parents */
+
+condition:				  exp GT exp 	{ $$ = $1 > $3;	 }
+						| exp GTE exp 	{ $$ = $1 >= $3; }
+						| exp ST exp 	{ $$ = $1 < $3;	 }
+						| exp STE exp 	{ $$ = $1 <= $3; }
+						| exp EQ exp 	{ $$ = $1 == $3; }
+						| exp NEQ exp 	{ $$ = $1 != $3; }
 						;
 
 print_stmt:				  PRINT LEFT_BKT exp RIGHT_BKT declaration_end	{ printData($3); /*printf("%.2f\n", $3);*/  };
@@ -249,6 +277,7 @@ void setMethodVarValue(std::string name, double value) {
 		UnknownVarError(name);
 	} else {
 		localMethodVars[name].value = value;
+		localMethodVars[name].initizalized = true;
 	}
 }
 
