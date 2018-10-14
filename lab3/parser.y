@@ -10,6 +10,8 @@
 	#include <vector>
 	#include "./custom/definitions.h"
 
+	const bool DEBUG_MODE = true;
+
 	extern int yylex();
 	extern void yyerror(const char *s);
 
@@ -26,14 +28,20 @@
 	void printMethod(YY_F::Method method);
 
 	bool isClassVarExists(std::string varName);
+	bool isNonVoidMethodExists(std::string methodName);
 	bool isLocalMethodVarExists(std::string varName);
 	bool isVariableInvalid(std::string varName);
 
 	double getValueForVariable(std::string varName);
+	double getReturnedValueOfMethod(std::string methodName);
+	void printData(double value);
 
 	void DivZeroError();
 	void UnknownVarError(std::string s);
+	void UnknownMethodError(std::string s);
+	void ReturnTypeMethodError(std::string s);
 	void InitializationVarError(std::string s);
+	void DuplicateMethodError(std::string s);
 
 	extern FILE* yyin;
 
@@ -53,8 +61,8 @@
 
 /* delcare tokens */
 %token<double_val> NUMBER
-%token<str_val> VARIABLE PACKAGE_NAME PRINT
-%token<str_val> MODIFICATOR TYPE
+%token<str_val> VARIABLE PACKAGE_NAME PRINT FUNC_CALL
+%token<str_val> MODIFICATOR TYPE STATIC
 %token<int_val> ADD SUB DIV MUL ASSIGN
 %token<int_val> LEFT_BKT RIGHT_BKT
 %token<int_val> PACKAGE CLASS
@@ -68,15 +76,16 @@
 %token<int_val> GREATER LESS NOT
 %token<int_val> EQUALS GREATER_OR_EQUALS LESS_OR_EQUALS NOT_EQUALS
 %token<int_val> AND OR
-%token<int_val> DOT COMMA
+%token<int_val> COMMA
 %token<int_val> LEFT_SQUARE_BKT RIGHT_SQUARE_BKT
 
-%token IF ELSE FOR WHILE
+%token IF ELSE FOR WHILE RETURN_ACTION DOT
 
 %type <double_val> exp;
 %type <double_val> subexp;
 %type <double_val> lowerexp;
 %type <double_val> assignment;
+%type <double_val> return_action;
 
 %start parse_tree
 
@@ -108,11 +117,16 @@ class_var_declaration:	  MODIFICATOR TYPE assignment				{ addClassVar(tempVar.na
 						| TYPE VARIABLE declaration_end 			{ addClassVar(*$2, "private", *$1, 0, false); 	}
 						;
 
-func_declaration:	  	  MODIFICATOR func_sub_def	{ tMethod.modificator = *$1; addMethod(); 			}
-						| func_sub_def				{ tMethod.modificator = "private"; addMethod(); 	}
+func_declaration:	  	  MODIFICATOR func_sub_def			{ tMethod.modificator = *$1; addMethod(); 								}
+						| MODIFICATOR STATIC func_sub_def 	{ tMethod.modificator = *$1; tMethod.isRootMethod = true; addMethod();	}
+						| func_sub_def						{ tMethod.modificator = "private"; addMethod(); 						}
 						;
 
-func_sub_def: 			  TYPE VARIABLE LEFT_BKT RIGHT_BKT LEFT_BRACE func_lines RIGHT_BRACE { tMethod.returnType = *$1; tMethod.name = *$2; };
+return_action:			  RETURN_ACTION	exp declaration_end	{ $$ = $2; };	
+
+func_sub_def: 			  TYPE VARIABLE LEFT_BKT RIGHT_BKT LEFT_BRACE func_lines return_action RIGHT_BRACE  { tMethod.returnType = *$1; tMethod.name = *$2; tMethod.returnValue = $7; } 
+						| TYPE VARIABLE LEFT_BKT RIGHT_BKT LEFT_BRACE func_lines RIGHT_BRACE 				{ tMethod.returnType = *$1; tMethod.name = *$2; tMethod.returnValue = 0;  } 
+						;
 
 func_lines:				| func_lines common_line
 						| common_line
@@ -134,13 +148,14 @@ subexp:			  	  	  subexp MUL lowerexp						{ $$ = $1 * $3;										}
 						| lowerexp									{ $$ = $1; 									 		}
 						;
 
-lowerexp:		  	  	  LEFT_BKT exp RIGHT_BKT					{ $$ = $2; }
-						| NUMBER									{ $$ = $1; }
-						| VARIABLE 									{ if(!isVariableInvalid(*$1)) $$ = getValueForVariable(*$1); }
+lowerexp:		  	  	  LEFT_BKT exp RIGHT_BKT									{ $$ = $2; }
+						| NUMBER													{ $$ = $1; }
+						| VARIABLE 													{ if(!isVariableInvalid(*$1)) $$ = getValueForVariable(*$1); }
+						| FUNC_CALL VARIABLE LEFT_BKT RIGHT_BKT						{ if(isNonVoidMethodExists(*$2)) $$ = getReturnedValueOfMethod(*$2); }
 						;
 
-print_stmt:				  PRINT LEFT_BKT exp RIGHT_BKT SEMI_COLON	{ printf("%.2f\n", $3);  };
-package:				  PACKAGE PACKAGE_NAME SEMI_COLON			{ myClass.package = *$2; };
+print_stmt:				  PRINT LEFT_BKT exp RIGHT_BKT declaration_end	{ printData($3); /*printf("%.2f\n", $3);*/  };
+package:				  PACKAGE PACKAGE_NAME declaration_end			{ myClass.package = *$2; };
 
 declaration_end:		  SEMI_COLON;
 
@@ -168,11 +183,34 @@ void UnknownVarError(std::string s) {
 	printf("Error: %s does not exist!\n", s.c_str());
 }
 
+void UnknownMethodError(std::string s) {
+	printf("Error: %s method does not exist!\n", s.c_str());
+}
+
+void ReturnTypeMethodError(std::string s) {
+	printf("Error: %s method has void return type!\n", s.c_str());
+}
+
 void InitializationVarError(std::string s) {
 	printf("Error: %s is not initizalized!\n", s.c_str());
 }
 
+void DuplicateMethodError(std::string s) {
+	printf("Error: %s is duplicated!\n", s.c_str());
+}
+
 void addMethod() {
+	if(myClass.methods.count(tMethod.name)) {
+		std::string retType1 = myClass.methods[tMethod.name].returnType;
+		std::string retType2 = tMethod.returnType;
+
+		if(!strcmp(retType1.c_str(), retType2.c_str())) {
+			DuplicateMethodError(tMethod.name);
+			localMethodVars.clear();
+			return;
+		}
+	}
+
 	tMethod.vars = localMethodVars;
 	localMethodVars.clear();
 	
@@ -230,6 +268,8 @@ void printMethod(YY_F::Method method) {
 	std::cout << "+ name: " << method.name << std::endl;
 	std::cout << "+ modificator: " << method.modificator << std::endl;
 	std::cout << "+ returnType: " << method.returnType << std::endl;
+	std::cout << "+ returnValue: " << method.returnValue << std::endl;
+	std::cout << "+ isRoot: " << (method.isRootMethod ? "yes" : "no") << std::endl;
 	std::cout << "+ vars (" << method.vars.size() << "): ";
 
 	for (std::map<std::string, YY_F::Variable>::iterator it = method.vars.begin(); it != method.vars.end(); ++it)
@@ -272,6 +312,18 @@ bool isLocalMethodVarExists(std::string varName) {
 	return localMethodVars.count(varName);
 }
 
+bool isNonVoidMethodExists(std::string methodName) {
+	if(!myClass.methods.count(methodName)) {
+		UnknownMethodError(methodName);
+		return false;
+	} else if(!strcmp("void", myClass.methods[methodName].returnType.c_str())) {
+		ReturnTypeMethodError(methodName);
+		return false;
+	} else {
+		return true;
+	}
+}
+
 bool isVariableInvalid(std::string varName) {
 	if (!isClassVarExists(varName) && !isLocalMethodVarExists(varName)) {
 		UnknownVarError(varName);
@@ -292,5 +344,15 @@ double getValueForVariable(std::string varName) {
 		return localMethodVars[varName].value;
 	} else {
 		return myClass.vars[varName].value;
+	}
+}
+
+double getReturnedValueOfMethod(std::string methodName) {
+	return myClass.methods[methodName].returnValue;
+}
+
+void printData(double value) {
+	if(DEBUG_MODE) {
+		std::cout << value << std::endl;
 	}
 }

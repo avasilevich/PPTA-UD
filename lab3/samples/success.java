@@ -15,8 +15,14 @@ public class ClassName {
 		System.out.println(fourth);
 	}
 
-	void secondFunc() {
-		int five = first + second;
+	int secondFunc() {
+		int five = first + second / 2;
 		System.out.println(five);
+
+		return five;
+	}
+
+	public static void main() {
+		int a = this->secondFunc() + 1;
 	}
 }

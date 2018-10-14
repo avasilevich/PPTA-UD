@@ -13,7 +13,9 @@ namespace YY_F {
 	struct Method {
 		std::string name;
 		std::string returnType;
+		double returnValue;
 		std::string modificator;
+		bool isRootMethod;
 		std::map<std::string, Variable> vars;
 	};
 

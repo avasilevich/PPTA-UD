@@ -18,6 +18,7 @@
 public|protected|private 									{ yylval.str_val = new std::string(yytext); return MODIFICATOR; }
 byte|short|int|long|float|double|char|String|boolean|void	{ yylval.str_val = new std::string(yytext); return TYPE;		}
 -?[0-9]+(\.[0-9]+)?											{ yylval.double_val = atof(yytext); return NUMBER;				}
+"this->"													{ return FUNC_CALL; 	}
 
 "true"		{ yylval.bool_val = true; return BOOLEAN;	}
 "false"		{ yylval.bool_val = false; return BOOLEAN;	}
@@ -26,6 +27,8 @@ byte|short|int|long|float|double|char|String|boolean|void	{ yylval.str_val = new
 
 "package"	return PACKAGE;
 "class"		return CLASS;
+"static"	return STATIC;
+"return"	return RETURN_ACTION;
 
 "if"		return IF;
 "else"		return ELSE;
