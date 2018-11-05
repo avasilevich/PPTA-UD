@@ -1,2 +1,5 @@
 lab*/a.out
 lab*/lex.yy.c
+lab4/generator
+lab*/*.output
+lab*/*.tab.*
