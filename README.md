@@ -15,3 +15,8 @@
 1. `make all` - compile
 2. `make clean` - clean output files
 3. `./a.out ./samples/success.java` - check file
+
+### Laba 4
+1. `make all` - compile
+2. `make clean` - clean output files
+3. `./generator ./samples/success.java` - generate asm code
