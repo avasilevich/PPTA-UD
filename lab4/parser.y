@@ -59,6 +59,7 @@
 	};
 
 	struct Variable *tempVar = NULL;
+	struct Method *tempMethod = NULL;
 	struct VarListNode *curVarList = NULL;
 
 	struct MethodListNode* methodList = NULL;
@@ -69,6 +70,8 @@
 	extern void yyerror(const char *s);
 
 	/* semantic functions */
+	struct Node* getNode(int nodeType, struct Node* left, struct Node* right);
+	struct Method* addMethod();
 	struct VarListNode* AddClassVarToList();
 
 	/* show & print functions */
@@ -102,6 +105,8 @@
 %token SUM_AND_EQUAL SUB_AND_EQUAL MUL_AND_EQUAL DIV_AND_EQUAL
 %token IF ELSE FOR WHILE RETURN_ACTION DOT COMMA
 
+//%type <double_val> return_action;
+
 %start parse_tree
 
 %%
@@ -127,7 +132,36 @@ line:					| class_var_declaration
 								printf("\nline %d: variable %s redeclared\n", tempLineIndex, tempVar->name.c_str());
 								errors++;
 							}
+
+							tempVar = NULL;
+						}
+						| func_declaration LEFT_BRACE func_operators RIGHT_BRACE
+						{
+							struct Method* method = addMethod();
+				
+							if(method == NULL)
+							{
+								printf("\nline %d: method %s redeclared\n", tempLineIndex, tempMethod->name.c_str());
+								errors++;
+							}
+							
+							struct Node *tempNode = getNode(-1, NULL, NULL);
+							tempNode->value.method = method;
+
+							if(tempNode->value.method != NULL) {
+								struct Method *m = tempNode->value.method;
+								m->operations = $<node>3;
+								m->vars = curVarList;
+							}
+
+							curVarList = NULL;
+							tempMethod = NULL;
 						};
+
+common_line:	  	  	// var_declaration
+						// | if_stmt
+						// | print_stmt
+						;
 
 class_var_declaration: 	MODIFICATOR initialized_class_var 
 						{
@@ -165,6 +199,26 @@ class_var_first_part:	TYPE VARIABLE
 							tempLineIndex = $<str>2.index;
 						};
 
+func_declaration:	  	  MODIFICATOR func_sub_def			{ tempMethod->modificator = *$<str>1.token;  									}
+						| MODIFICATOR STATIC func_sub_def 	{ tempMethod->modificator = *$<str>1.token; tempMethod->isRootMethod = true;	}
+						| func_sub_def						{ tempMethod->modificator = "private"; 											}
+						;
+
+func_sub_def:			TYPE VARIABLE LEFT_BKT RIGHT_BKT					
+						{ 
+							tempMethod = (struct Method *)malloc(sizeof(struct Method));
+							tempMethod->returnType = *$<str>1.token; 
+							tempMethod->name = *$<str>2.token; 
+							tempMethod->returnValue = 0;
+							tempLineIndex = $<str>2.index;
+						};
+
+// return_action:			RETURN_ACTION NUMBER declaration_end	{ $$ = $2; };	
+
+func_operators:			| func_operators common_line
+						| common_line
+						;
+
 package:			    PACKAGE PACKAGE_NAME SEMI_COLON			{ /*myClass.package = *$2;*/ 	};
 
 %%
@@ -185,7 +239,6 @@ int main(int argc, char **argv)
 	}	
 
 	showClassMethods();
-	printVarDeclarations(curVarList);
 	
 	generateCode();
 	return 0;
@@ -203,6 +256,17 @@ int generateCode()
 	
 	fclose(file);
 	return 1;
+}
+
+struct Node* getNode(int nodeType, struct Node* left, struct Node* right)
+{
+	struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    
+    node->nodeType = nodeType;
+    node->left = left;
+    node->right = right;
+
+    return node;
 }
 
 struct VarListNode* AddClassVarToList()
@@ -246,9 +310,56 @@ struct VarListNode* AddClassVarToList()
 	return listNode;
 }
 
+
+struct Method* addMethod()
+{
+	struct MethodListNode* workNode = methodList;
+
+	while(workNode)
+    {
+		std::string workNodeMethodName = workNode->method->name;
+		std::string tempMethodName = tempMethod->name;
+
+		// if method already exists, then error will be shown
+		if(!workNodeMethodName.compare(tempMethodName)) {
+			return NULL;			
+		}
+
+        workNode = workNode->next;
+    }
+
+    struct MethodListNode* methodNode = (struct MethodListNode*)malloc(sizeof(struct MethodListNode));
+    methodNode->method = tempMethod;
+    methodNode->next = NULL;
+
+    workNode = methodList;
+
+    if(workNode)
+    {
+        while(workNode->next) {
+            workNode = workNode->next;
+        }
+			
+        workNode->next = methodNode;
+    }
+    else
+    {
+        methodList = methodNode;
+    }
+
+    return tempMethod;
+}
+
 void showClassMethods()
 {
 	struct MethodListNode* workNode = methodList;
+
+	printf("\nClass methods declarations:");
+
+	if(workNode == NULL) {
+		printf(" empty.");
+		return;
+	}
 
 	while(workNode)
 	{
@@ -266,7 +377,7 @@ void showMethodInfo(struct Method *method)
 	
 	//printf("\nOperators: ");
 	//printOperators(method->operations, 0);
-	printf("\n\n");
+	printf("\n");
 }
 
 void printVarDeclarations(struct VarListNode *varList)
@@ -282,8 +393,7 @@ void printVarDeclarations(struct VarListNode *varList)
 	{
 		struct Variable* var = workNode->var;
 
-		// printType(var->type);
-		printf(" %s", var->name.c_str());
+		printf(" %s[%s]", var->name.c_str(), var->type.c_str());
 		
 		if(workNode->next != NULL)	{
 			printf(",");

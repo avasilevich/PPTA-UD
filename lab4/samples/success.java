@@ -9,4 +9,13 @@ public class ClassName {
 	int secondNonInitVar;
 
 	int third = 8;
+
+	private void firstFunc() {	
+	}
+
+	int secondFunc() {
+	}
+
+	public static void main() {
+	}
 }
