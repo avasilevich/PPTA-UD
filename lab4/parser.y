@@ -182,9 +182,10 @@ int main(int argc, char **argv)
 
 	if(errors > 0) { 
 		return -1; 
-	}
+	}	
 
 	showClassMethods();
+	printVarDeclarations(curVarList);
 	
 	generateCode();
 	return 0;
@@ -261,7 +262,6 @@ void showMethodInfo(struct Method *method)
 	printf("\nMethod[%s]:", method->name.c_str());
 	// printType(func->type);
 	
-	printf("\nVariable declarations: ");
 	printVarDeclarations(method->vars);
 	
 	//printf("\nOperators: ");
@@ -272,6 +272,11 @@ void showMethodInfo(struct Method *method)
 void printVarDeclarations(struct VarListNode *varList)
 {
 	struct VarListNode* workNode = varList;
+	printf("\nVariable declarations:");
+
+	if(workNode == NULL) {
+		printf(" empty");
+	}
 
 	while(workNode)
 	{
@@ -281,9 +286,11 @@ void printVarDeclarations(struct VarListNode *varList)
 		printf(" %s", var->name.c_str());
 		
 		if(workNode->next != NULL)	{
-			printf(", ");
+			printf(",");
 		}
 
 		workNode = workNode->next;
 	}
+
+	printf(".\n");
 }
