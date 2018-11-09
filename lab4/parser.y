@@ -36,8 +36,6 @@
 %token SUM_AND_EQUAL SUB_AND_EQUAL MUL_AND_EQUAL DIV_AND_EQUAL
 %token IF ELSE FOR WHILE RETURN_ACTION DOT COMMA
 
-//%type <double_val> return_action;
-
 %start parse_tree
 
 %%
@@ -268,7 +266,7 @@ print_stmt: 			PRINT LEFT_BKT VARIABLE RIGHT_BKT SEMI_COLON
 							}
 						};
 
-package:			    PACKAGE PACKAGE_NAME SEMI_COLON			{ /*myClass.package = *$2;*/ 	};
+package:			    PACKAGE PACKAGE_NAME SEMI_COLON;
 
 %%
 
