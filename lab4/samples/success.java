@@ -11,9 +11,8 @@ public class ClassName {
 	int third = 8;
 
 	private void firstFunc() {	
-	}
-
-	int secondFunc() {
+		int a = 2;
+		a = 1 + a;
 	}
 
 	public static void main() {
