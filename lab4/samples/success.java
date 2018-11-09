@@ -13,9 +13,12 @@ public class ClassName {
 	private void firstFunc() {	
 		int a = 2;
 		a = 1 + a;
-		System.out.println(a);
 	}
 
 	public static void main() {
+		int b = 3;
+		int c = 1;
+		c = b;
+		System.out.println(c);
 	}
 }

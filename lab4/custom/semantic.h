@@ -25,8 +25,6 @@ struct Variable {
 
 struct Method {
 	std::string name;
-	std::string returnType;
-	float returnValue;
 	std::string modificator;
 	bool isRootMethod;
 	struct Node *operations;
@@ -195,6 +193,24 @@ struct Method* addMethod()
     }
 
     return tempMethod;
+}
+
+struct Method* getMainMethod()
+{
+	struct MethodListNode* workNode = methodList;
+
+	while(workNode)
+    {
+		struct Method* method = workNode->method;
+
+		if(method->isRootMethod) {
+			return method;			
+		}
+
+        workNode = workNode->next;
+    }
+
+    return NULL;
 }
 
 struct Variable* getLocalVar(std::string varName)

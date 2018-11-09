@@ -4,3 +4,5 @@ lab4/generator
 lab*/*.output
 lab*/*.tab.*
 lab*/*.asm
+lab*/*.o
+lab4/lab4

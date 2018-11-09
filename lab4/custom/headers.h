@@ -26,17 +26,14 @@
 #define _AND 43
 
 #define _SUB_OP 45
-#define _INC_OP 46
-#define _DEC_OP 47
 
-int labelCount = 0;
-int currentCycle = 0;
 int errors = 0;
 int tempLineIndex = 0;
 
 /* semantic functions */
 struct Node* getNode(char nodeType, struct Node* left, struct Node* right);
 struct Method* addMethod();
+struct Method* getMainMethod();
 struct VarListNode* addClassVarToList();
 struct VarListNode* addMethodVarToList();
 struct Variable* getLocalVar(std::string varName);

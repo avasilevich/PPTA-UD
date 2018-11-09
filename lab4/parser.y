@@ -1,4 +1,4 @@
-%debug
+// %debug
 
 %{
 	#include "./custom/headers.h"
@@ -151,9 +151,7 @@ func_declaration:	  	  MODIFICATOR func_sub_def			{ tempMethod->modificator = *$
 func_sub_def:			TYPE VARIABLE LEFT_BKT RIGHT_BKT					
 						{ 
 							tempMethod = (struct Method *)malloc(sizeof(struct Method));
-							tempMethod->returnType = *$<str>1.token; 
 							tempMethod->name = *$<str>2.token; 
-							tempMethod->returnValue = 0;
 							tempLineIndex = $<str>2.index;
 						};
 
@@ -169,7 +167,7 @@ statement:				  logic_expr 							{ $<node>$ = $<node>1; }
 								if(classVar == NULL)
 								{
 									std::cout << "line " << $<str>1.index << ": variable ";
-									std::cout << $<str>1.token << " undeclared." << std::endl;
+									std::cout << *$<str>1.token << " undeclared." << std::endl;
 									
 									$<node>$ = NULL;
 									errors++;
@@ -212,8 +210,6 @@ mul_expr: 				  unary_expr					{ $<node>$ = $<node>1; }
 
 unary_expr:				  addend 						{ $<node>$ = $<node>1; }
 						| SUB unary_expr 				{ $<node>$ = getNode(_SUB_OP, NULL, $<node>2); }
-						| unary_expr INCREMENT 			{ $<node>$ = getNode(_INC_OP, NULL, $<node>1); }
-						| unary_expr DECREMENT 			{ $<node>$ = getNode(_DEC_OP, NULL, $<node>1); }
 						| NOT unary_expr 				{ $<node>$ = getNode(_NOT, NULL, $<node>2); }
 						;
 
@@ -224,7 +220,7 @@ addend:					VARIABLE
 							if(var == NULL)
 							{
 								std::cout << "line " << $<str>1.index << ": variable ";
-								std::cout << $<str>1.token << " undeclared." << std::endl;
+								std::cout << *$<str>1.token << " undeclared." << std::endl;
 								
 								$<node>$ = NULL;
 								errors++;
@@ -254,7 +250,7 @@ print_stmt: 			PRINT LEFT_BKT VARIABLE RIGHT_BKT SEMI_COLON
 							if(var == NULL)
 							{
 								std::cout << "line " << $<str>1.index << ": variable ";
-								std::cout << $<str>1.token << " undeclared." << std::endl;
+								std::cout << *$<str>1.token << " undeclared." << std::endl;
 								
 								$<node>$ = NULL;
 								errors++;
@@ -283,7 +279,7 @@ int main(int argc, char **argv)
 		return -1; 
 	}	
 
-	showClassInfo();
+	//showClassInfo();
 	generateCode();
 	return 0;
 }

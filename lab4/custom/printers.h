@@ -192,14 +192,6 @@ void printTree(struct Node *root)
 			printf("-");
 			printTree(root->right); 
 			return;
-		case _INC_OP:	
-			printTree(root->right);		
-			printf("++");
-			return;
-		case _DEC_OP:
-			printTree(root->right);	
-			printf("--");
-			return;
 		case _FUNC_CALL:
 			printf("%s(..)", root->value.method->name.c_str());
 			return;
