@@ -89,6 +89,7 @@
 	struct VarListNode* addMethodVarToList();
 	struct Variable* getLocalVar(std::string varName);
 	struct Variable* getClassVar(std::string varName);
+	struct Variable* getVar(std::string varName);
 
 	/* show & print functions */
 	void showClassInfo();
@@ -194,8 +195,8 @@ common_line:	  	  	var_declaration
 							tempVar = NULL;
 						}
 						| statement SEMI_COLON		{ $<node>$ = $<node>1; }
+						| print_stmt				{ $<node>$ = $<node>1; }
 						// TODO | if_stmt
-						// TODO | print_stmt
 						;
 
 
@@ -310,25 +311,17 @@ unary_expr:				  addend 						{ $<node>$ = $<node>1; }
 						| NOT unary_expr 				{ $<node>$ = getNode(41, NULL, $<node>2); }
 						;
 
-addend:					  VARIABLE
+addend:					VARIABLE
 						{
-							struct Variable* var = getLocalVar(*$<str>1.token);
+							struct Variable* var = getVar(*$<str>1.token);
 
 							if(var == NULL)
 							{
-								struct Variable* classVar = getClassVar(*$<str>1.token);
-
-								if(classVar == NULL)
-								{
-									std::cout << "line " << $<str>1.index << ": variable ";
-									std::cout << $<str>1.token << " undeclared." << std::endl;
-									
-									$<node>$ = NULL;
-									errors++;
-								} else {
-									$<node>$ = getNode(0, NULL, NULL);
-									$<node>$->value.var = classVar;
-								}
+								std::cout << "line " << $<str>1.index << ": variable ";
+								std::cout << $<str>1.token << " undeclared." << std::endl;
+								
+								$<node>$ = NULL;
+								errors++;
 							} else {
 								$<node>$ = getNode(0, NULL, NULL);
 								$<node>$->value.var = var;
@@ -344,11 +337,26 @@ addend:					  VARIABLE
 							$<node>$->value.constant = constant;
 						};
 
-func_operators:			{
-							$<node>$ = NULL;
-						}
+func_operators:			{ $<node>$ = NULL; }
 						| func_operators common_line { $<node>$ = getNode(3, $<node>1, $<node>2); }
 						;
+
+print_stmt: 			PRINT LEFT_BKT VARIABLE RIGHT_BKT SEMI_COLON		
+						{ 
+							struct Variable *var = getVar(*$<str>3.token);
+
+							if(var == NULL)
+							{
+								std::cout << "line " << $<str>1.index << ": variable ";
+								std::cout << $<str>1.token << " undeclared." << std::endl;
+								
+								$<node>$ = NULL;
+								errors++;
+							} else {
+								$<node>$ = getNode(12, NULL, NULL);
+								$<node>$->value.var = var;
+							}
+						};
 
 package:			    PACKAGE PACKAGE_NAME SEMI_COLON			{ /*myClass.package = *$2;*/ 	};
 
@@ -553,6 +561,17 @@ struct Variable* getClassVar(std::string varName)
 	return NULL;
 }
 
+struct Variable* getVar(std::string varName)
+{
+	struct Variable* var = getLocalVar(varName);
+
+	if(var == NULL) {
+		var = getClassVar(varName);
+	}
+
+	return var;
+}
+
 void showClassInfo() 
 {
 	printf("\n++++++++++Class variables:++++++++++\n");
@@ -643,17 +662,7 @@ void printOperations(struct Node *operations, int depth)
 					printOperations(rightNode->right, depth+1);
 					break;
 				case 12: // print
-					printf("PRINT: ");
-					if(rightNode->right->nodeType == 0)
-						std::cout << rightNode->right->value.var->name;
-					else if(rightNode->right->nodeType == 1)
-					{
-						if(rightNode->right->value.constant->type == 0)
-							std::cout << rightNode->right->value.constant->value.intValue;
-					}					
-					break;
-				case 13: // scan	
-					printf("SCAN: ");
+					printf("PRINT var: ");
 					std::cout << rightNode->value.var->name;
 					break;
 				case 14: // function call

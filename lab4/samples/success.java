@@ -13,6 +13,7 @@ public class ClassName {
 	private void firstFunc() {	
 		int a = 2;
 		a = 1 + a;
+		System.out.println(a);
 	}
 
 	public static void main() {
