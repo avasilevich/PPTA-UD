@@ -12,6 +12,7 @@
 	
 	/* code generation functions */
 	int generateCode();
+	void writeALLVarDeclarations(FILE *file);
 %}
 
 %union {
@@ -40,13 +41,13 @@
 
 %%
 
-parse_tree:				  package class_stmt;
+parse_tree:				package class_stmt;
 
-class_stmt:		  	  	  MODIFICATOR class_SUB_SYM_stmt
-						| class_SUB_SYM_stmt
+class_stmt:		  	  	  MODIFICATOR class_sub_stmt
+						| class_sub_stmt
 						;
 
-class_SUB_SYM_stmt:			  CLASS VARIABLE LEFT_BRACE lines RIGHT_BRACE { /*setClassName(*$2); */ };
+class_sub_stmt:		    CLASS VARIABLE LEFT_BRACE lines RIGHT_BRACE;
 
 lines:					| lines line
 						| line
@@ -71,7 +72,7 @@ line:					| class_var_declaration
 				
 							if(method == NULL)
 							{
-								std::cout << "line " << tempLineIndex << ": variable ";
+								std::cout << "line " << tempLineIndex << ": method ";
 								std::cout << tempMethod->name << " redeclared." << std::endl;
 								errors++;
 							}
@@ -108,11 +109,11 @@ common_line:	  	  	var_declaration
 						;
 
 
-var_declaration:	common_var_first_part ASSIGN NUMBER SEMI_COLON
-					{
-						tempVar->value = $<number>3;
-						tempVar->initizalized = true;
-					};
+var_declaration:		common_var_first_part ASSIGN NUMBER SEMI_COLON
+						{
+							tempVar->value = $<number>3;
+							tempVar->initizalized = true;
+						};
 
 class_var_declaration: 	MODIFICATOR common_var_first_part ASSIGN NUMBER SEMI_COLON 
 						{
@@ -145,12 +146,12 @@ common_var_first_part:	TYPE VARIABLE
 							tempLineIndex = $<str>2.index;
 						};
 
-func_declaration:	  	  MODIFICATOR func_SUB_SYM_def			{ tempMethod->modificator = *$<str>1.token;  									}
-						| MODIFICATOR STATIC func_SUB_SYM_def 	{ tempMethod->modificator = *$<str>1.token; tempMethod->isRootMethod = true;	}
-						| func_SUB_SYM_def						{ tempMethod->modificator = "private"; 											}
+func_declaration:	  	  MODIFICATOR func_sub_def			{ tempMethod->modificator = *$<str>1.token;  									}
+						| MODIFICATOR STATIC func_sub_def 	{ tempMethod->modificator = *$<str>1.token; tempMethod->isRootMethod = true;	}
+						| func_sub_def						{ tempMethod->modificator = "private"; 											}
 						;
 
-func_SUB_SYM_def:			TYPE VARIABLE LEFT_BKT RIGHT_BKT					
+func_sub_def:			TYPE VARIABLE LEFT_BKT RIGHT_BKT					
 						{ 
 							tempMethod = (struct Method *)malloc(sizeof(struct Method));
 							tempMethod->returnType = *$<str>1.token; 
@@ -159,7 +160,7 @@ func_SUB_SYM_def:			TYPE VARIABLE LEFT_BKT RIGHT_BKT
 							tempLineIndex = $<str>2.index;
 						};
 
-statement:				  logic_expr 						{ $<node>$ = $<node>1; }
+statement:				  logic_expr 							{ $<node>$ = $<node>1; }
 						| VARIABLE ASSIGN logic_expr
 						{
 							struct Variable* var = getLocalVar(*$<str>1.token);
@@ -245,7 +246,7 @@ addend:					VARIABLE
 							$<node>$->value.constant = constant;
 						};
 
-func_operators:			{ $<node>$ = NULL; }
+func_operators:			  { $<node>$ = NULL; }
 						| func_operators common_line { $<node>$ = getNode(3, $<node>1, $<node>2); }
 						;
 
