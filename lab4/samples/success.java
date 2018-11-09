@@ -5,7 +5,7 @@ public class ClassName {
 	public int first = 10;
 	private int second = 1;
 	
-	protected double nonInitVar;
+	protected int nonInitVar;
 	int secondNonInitVar;
 
 	int third = 8;

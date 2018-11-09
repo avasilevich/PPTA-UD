@@ -32,7 +32,12 @@ void showMethodInfo(struct Method *method)
 	
 	std::cout << "\nOperations:";
 
-	printOperations(method->operations, 0);
+	if(method->operations != NULL) {
+		printOperations(method->operations, 0);
+	} else {
+		printf(" empty.");
+	}
+
 	printf("\n");
 }
 
@@ -58,46 +63,42 @@ void printOperations(struct Node *operations, int depth)
 		{
 			switch(rightNode->nodeType)
 			{
-				case _ASSIGN_SYMMENT_OP:
+				case _ASSIGNMENT_OP:
 					std::cout << "assignment: " << rightNode->value.var->name << " = ";
 					printTree(rightNode->right);
 					break;
-				case 9:  // for
-					printf("FOR: ");
-					printTree(rightNode->left); printf("; ");
-					printTree(rightNode->right->left); printf("; ");
-					printTree(rightNode->right->right);
+				// case 9:  // for
+				// 	printf("FOR: ");
+				// 	printTree(rightNode->left); printf("; ");
+				// 	printTree(rightNode->right->left); printf("; ");
+				// 	printTree(rightNode->right->right);
 					
-					printOperations(rightNode->value.node, depth+1);						
-					break;
-				case 10: // if
-					printf("IF: ");
-					printTree(rightNode->value.node);
-					printOperations(rightNode->left, depth+1);	
+				// 	printOperations(rightNode->value.node, depth+1);						
+				// 	break;
+				// case 10: // if
+				// 	printf("IF: ");
+				// 	printTree(rightNode->value.node);
+				// 	printOperations(rightNode->left, depth+1);	
 					
-					if(rightNode->right)
-					{
-						printSpaces(depth);
-						printf("ELSE:");
-						printOperations(rightNode->right, depth+1);
-					}
-					break;
-				case 11: // while
-					printf("WHILE: ");
-					printTree(rightNode->left);
-					printOperations(rightNode->right, depth+1);
-					break;
-				case 12: // print
+				// 	if(rightNode->right)
+				// 	{
+				// 		printSpaces(depth);
+				// 		printf("ELSE:");
+				// 		printOperations(rightNode->right, depth+1);
+				// 	}
+				// 	break;
+				// case 11: // while
+				// 	printf("WHILE: ");
+				// 	printTree(rightNode->left);
+				// 	printOperations(rightNode->right, depth+1);
+				// 	break;
+				case _PRINT_FUNC: // print
 					printf("PRINT var: ");
 					std::cout << rightNode->value.var->name;
 					break;
-				case _FUNC_CALL: // function call
-					std::cout << rightNode->value.method->name << "(..)";
-					break;
-				case 15: // return
-					printf("RETURN ");
-					printTree(rightNode->right);
-					break;
+				// case _FUNC_CALL: // function call
+				// 	std::cout << rightNode->value.method->name << "(..)";
+				// 	break;
 				default:
 					printTree(rightNode);
 			}

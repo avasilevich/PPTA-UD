@@ -19,7 +19,7 @@ struct Variable {
 	std::string name;
 	std::string type;
 	std::string modificator;
-	float value;
+	int value;
 	bool initizalized;
 };
 
@@ -58,6 +58,7 @@ struct VarListNode
 
 struct Variable *tempVar = NULL;
 struct Method *tempMethod = NULL;
+
 struct VarListNode *curVarList = NULL;
 struct VarListNode *classVarsList = NULL;
 
