@@ -7,6 +7,31 @@
 	#include <stdlib.h>
 	#include <iostream>
 
+	#define _VAR 0
+	#define _CONST 1
+	#define _ASSIGN_SYMMENT_OP 7
+	#define _PRINT_FUNC 12
+	#define _FUNC_CALL 14
+	#define _ADD_SYM 30
+	#define _SUB_SYM 31
+	#define _MUL_SYM 32
+	#define _DIV_SYM 33
+	#define _ASSIGN_SYM 34
+
+	#define _ST 35
+	#define _GT 36
+	#define _STE 37
+	#define _GTE 38
+	#define _EQ 39
+	#define _NEQ 40
+	#define _NOT 41
+	#define _OR 42
+	#define _AND 43
+
+	#define _SUB_OP 45
+	#define _INC_OP 46
+	#define _DEC_OP 47
+
 	int labelCount = 0;
 	int currentCycle = 0;
 	int errors = 0;
@@ -134,11 +159,11 @@
 
 parse_tree:				  package class_stmt;
 
-class_stmt:		  	  	  MODIFICATOR class_sub_stmt
-						| class_sub_stmt
+class_stmt:		  	  	  MODIFICATOR class_SUB_SYM_stmt
+						| class_SUB_SYM_stmt
 						;
 
-class_sub_stmt:			  CLASS VARIABLE LEFT_BRACE lines RIGHT_BRACE { /*setClassName(*$2); */ };
+class_SUB_SYM_stmt:			  CLASS VARIABLE LEFT_BRACE lines RIGHT_BRACE { /*setClassName(*$2); */ };
 
 lines:					| lines line
 						| line
@@ -237,12 +262,12 @@ common_var_first_part:	TYPE VARIABLE
 							tempLineIndex = $<str>2.index;
 						};
 
-func_declaration:	  	  MODIFICATOR func_sub_def			{ tempMethod->modificator = *$<str>1.token;  									}
-						| MODIFICATOR STATIC func_sub_def 	{ tempMethod->modificator = *$<str>1.token; tempMethod->isRootMethod = true;	}
-						| func_sub_def						{ tempMethod->modificator = "private"; 											}
+func_declaration:	  	  MODIFICATOR func_SUB_SYM_def			{ tempMethod->modificator = *$<str>1.token;  									}
+						| MODIFICATOR STATIC func_SUB_SYM_def 	{ tempMethod->modificator = *$<str>1.token; tempMethod->isRootMethod = true;	}
+						| func_SUB_SYM_def						{ tempMethod->modificator = "private"; 											}
 						;
 
-func_sub_def:			TYPE VARIABLE LEFT_BKT RIGHT_BKT					
+func_SUB_SYM_def:			TYPE VARIABLE LEFT_BKT RIGHT_BKT					
 						{ 
 							tempMethod = (struct Method *)malloc(sizeof(struct Method));
 							tempMethod->returnType = *$<str>1.token; 
@@ -268,47 +293,47 @@ statement:				  logic_expr 						{ $<node>$ = $<node>1; }
 									$<node>$ = NULL;
 									errors++;
 								} else {
-									$<node>$ = getNode(7, NULL, $<node>3);
+									$<node>$ = getNode(_ASSIGN_SYMMENT_OP, NULL, $<node>3);
 									$<node>$->value.var = classVar;
 								}
 							} else {
-								$<node>$ = getNode(7, NULL, $<node>3);
+								$<node>$ = getNode(_ASSIGN_SYMMENT_OP, NULL, $<node>3);
 								$<node>$->value.var = var;
 							}
 						};
 
 logic_expr:				  logic_or_expr 				{ $<node>$ = $<node>1; }
-						| logic_expr NEQ logic_or_expr	{ $<node>$ = getNode(40, $<node>1, $<node>3); }
-						| logic_expr ST logic_or_expr	{ $<node>$ = getNode(35, $<node>1, $<node>3); }
-						| logic_expr GT logic_or_expr 	{ $<node>$ = getNode(36, $<node>1, $<node>3); }
-						| logic_expr EQ logic_or_expr 	{ $<node>$ = getNode(39, $<node>1, $<node>3); }
-						| logic_expr STE  logic_or_expr	{ $<node>$ = getNode(37, $<node>1, $<node>3); }
-						| logic_expr GTE logic_or_expr 	{ $<node>$ = getNode(38, $<node>1, $<node>3); }
+						| logic_expr NEQ logic_or_expr	{ $<node>$ = getNode(_NEQ, $<node>1, $<node>3); }
+						| logic_expr ST logic_or_expr	{ $<node>$ = getNode(_ST, $<node>1, $<node>3); }
+						| logic_expr GT logic_or_expr 	{ $<node>$ = getNode(_GT, $<node>1, $<node>3); }
+						| logic_expr EQ logic_or_expr 	{ $<node>$ = getNode(_EQ, $<node>1, $<node>3); }
+						| logic_expr STE  logic_or_expr	{ $<node>$ = getNode(_STE, $<node>1, $<node>3); }
+						| logic_expr GTE logic_or_expr 	{ $<node>$ = getNode(_GTE, $<node>1, $<node>3); }
 						;
 
 logic_or_expr:		  	  logic_and_expr					{ $<node>$ = $<node>1; }
-						| logic_or_expr OR logic_and_expr	{ $<node>$ = getNode(42, $<node>1, $<node>3); }
+						| logic_or_expr OR logic_and_expr	{ $<node>$ = getNode(_OR, $<node>1, $<node>3); }
 						;	
 
 logic_and_expr:		  	  plus_expr						{ $<node>$ = $<node>1; }
-						| logic_and_expr AND plus_expr	{ $<node>$ = getNode(43, $<node>1, $<node>3); }
+						| logic_and_expr AND plus_expr	{ $<node>$ = getNode(_AND, $<node>1, $<node>3); }
 						;
 
 plus_expr:  			  mul_expr						{ $<node>$ = $<node>1; }
-						| plus_expr ADD mul_expr		{ $<node>$ = getNode(30, $<node>1, $<node>3); }
-						| plus_expr SUB mul_expr 		{ $<node>$ = getNode(31, $<node>1, $<node>3); }
+						| plus_expr ADD mul_expr		{ $<node>$ = getNode(_ADD_SYM, $<node>1, $<node>3); }
+						| plus_expr SUB mul_expr 		{ $<node>$ = getNode(_SUB_SYM, $<node>1, $<node>3); }
 						;
 
 mul_expr: 				  unary_expr					{ $<node>$ = $<node>1; }
-						| mul_expr MUL unary_expr   	{ $<node>$ = getNode(32, $<node>1, $<node>3); }
-						| mul_expr DIV unary_expr 		{ $<node>$ = getNode(33, $<node>1, $<node>3); }
+						| mul_expr MUL unary_expr   	{ $<node>$ = getNode(_MUL_SYM, $<node>1, $<node>3); }
+						| mul_expr DIV unary_expr 		{ $<node>$ = getNode(_DIV_SYM, $<node>1, $<node>3); }
 						;
 
 unary_expr:				  addend 						{ $<node>$ = $<node>1; }
-						| SUB unary_expr 				{ $<node>$ = getNode(45, NULL, $<node>2); }
-						| unary_expr INCREMENT 			{ $<node>$ = getNode(46, NULL, $<node>1); }
-						| unary_expr DECREMENT 			{ $<node>$ = getNode(47, NULL, $<node>1); }
-						| NOT unary_expr 				{ $<node>$ = getNode(41, NULL, $<node>2); }
+						| SUB unary_expr 				{ $<node>$ = getNode(_SUB_OP, NULL, $<node>2); }
+						| unary_expr INCREMENT 			{ $<node>$ = getNode(_INC_OP, NULL, $<node>1); }
+						| unary_expr DECREMENT 			{ $<node>$ = getNode(_DEC_OP, NULL, $<node>1); }
+						| NOT unary_expr 				{ $<node>$ = getNode(_NOT, NULL, $<node>2); }
 						;
 
 addend:					VARIABLE
@@ -323,7 +348,7 @@ addend:					VARIABLE
 								$<node>$ = NULL;
 								errors++;
 							} else {
-								$<node>$ = getNode(0, NULL, NULL);
+								$<node>$ = getNode(_VAR, NULL, NULL);
 								$<node>$->value.var = var;
 							}
 						}
@@ -333,7 +358,7 @@ addend:					VARIABLE
 							constant->type = 0;
 							constant->value.intValue = $<number>1;
 							
-							$<node>$ = getNode(1, NULL, NULL);
+							$<node>$ = getNode(_CONST, NULL, NULL);
 							$<node>$->value.constant = constant;
 						};
 
@@ -353,7 +378,7 @@ print_stmt: 			PRINT LEFT_BKT VARIABLE RIGHT_BKT SEMI_COLON
 								$<node>$ = NULL;
 								errors++;
 							} else {
-								$<node>$ = getNode(12, NULL, NULL);
+								$<node>$ = getNode(_PRINT_FUNC, NULL, NULL);
 								$<node>$->value.var = var;
 							}
 						};
@@ -632,7 +657,7 @@ void printOperations(struct Node *operations, int depth)
 		{
 			switch(rightNode->nodeType)
 			{
-				case 7:
+				case _ASSIGN_SYMMENT_OP:
 					std::cout << "assignment: " << rightNode->value.var->name << " = ";
 					printTree(rightNode->right);
 					break;
@@ -665,7 +690,7 @@ void printOperations(struct Node *operations, int depth)
 					printf("PRINT var: ");
 					std::cout << rightNode->value.var->name;
 					break;
-				case 14: // function call
+				case _FUNC_CALL: // function call
 					std::cout << rightNode->value.method->name << "(..)";
 					break;
 				case 15: // return
@@ -709,8 +734,8 @@ void printTree(struct Node *root)
 {
 	if(!root) { return; }
 
-	if((root->nodeType < 0) || (root->nodeType > 1 && root->nodeType < 14) 
-		|| (root->nodeType > 14 && root->nodeType < 30)	|| (root->nodeType > 47)) 
+	if((root->nodeType < 0) || (root->nodeType > 1 && root->nodeType < _FUNC_CALL) 
+		|| (root->nodeType > _FUNC_CALL && root->nodeType < _ADD_SYM)	|| (root->nodeType > 47)) 
 	{
 		return;	
 	} 	
@@ -719,59 +744,67 @@ void printTree(struct Node *root)
 	
 	switch(root->nodeType)
 	{
-		case 30:
+		case _ADD_SYM:
 			printf("+");
 			break;
-		case 31:
+		case _SUB_SYM:
 			printf("-");
 			break;
-		case 32:
+		case _MUL_SYM:
 			printf("*");
 			break;
-		case 33:
+		case _DIV_SYM:
 			printf("/");
 			break;
-		case 34:
+		case _ASSIGN_SYM:
 			printf("=");
 			break;
-		case 35:
+		case _ST:
 			printf("<");
 			break;
-		case 36:
+		case _GT:
 			printf(">");
 			break;
-		case 37:
+		case _STE:
 			printf("<=");
 			break;
-		case 38:
+		case _GTE:
 			printf(">=");
 			break;
-		case 39:
+		case _EQ:
 			printf("==");
 			break;
-		case 40:
+		case _NEQ:
 			printf("!=");
 			break;
-		case 41:
+		case _NOT:
 			printf("!");
 			break;
-		case 42:
+		case _OR:
 			printf("||");
 			break;
-		case 43:
+		case _AND:
 			printf("&&");
 			break;
-		case 45:
+		case _SUB_OP:
 			printf("-");
 			printTree(root->right); 
 			return;
-		case 14:
+		case _INC_OP:	
+			printTree(root->right);		
+			printf("++");
+			return;
+		case _DEC_OP:
+			printTree(root->right);	
+			printf("--");
+			return;
+		case _FUNC_CALL:
 			printf("%s(..)", root->value.method->name.c_str());
 			return;
-		case 0:
+		case _VAR:
 			printf("%s", root->value.var->name.c_str());
 			break;
-		case 1:
+		case _CONST:
 			printf("%d", root->value.constant->value.intValue);
 			break;
 	}
