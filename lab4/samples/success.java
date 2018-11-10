@@ -6,20 +6,27 @@ public class ClassName {
 	private int second = 1;
 	
 	protected int nonInitVar;
-	int secondNonInitVar;
 
+	int secondNonInitVar;
 	int third = 8;
 
 	private void firstFunc() {	
 		int a = 2;
-		a = 1 + a;
+		System.out.println(a);
 	}
 
 	public static void main() {
 		int b = 3;
 		int c = 1;
+
 		c = b + 1;
-		c = c + 10;
+
+		if(c > 3) {
+			c = c + 10;
+		} else {
+			c = c + 20;
+		}
+
 		System.out.println(c);
 	}
 }

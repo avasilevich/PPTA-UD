@@ -9,7 +9,7 @@ CXXSTD	= -std=c++11
 
 CXXFLAGS	= $(CXXDEBUG) -lm -lfl
 
-CLEANLIST = lex.yy.c parser.tab.c parser.tab.h a.out parser.output generator lab4.asm lab4.o
+CLEANLIST = lex.yy.c parser.tab.c parser.tab.h a.out parser.output generator lab4.asm lab4.o lab4
 
 OBJS = parser.tab.c lex.yy.c
 

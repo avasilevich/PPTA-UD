@@ -75,18 +75,18 @@ void printOperations(struct Node *operations, int depth)
 					
 				// 	printOperations(rightNode->value.node, depth+1);						
 				// 	break;
-				// case 10: // if
-				// 	printf("IF: ");
-				// 	printTree(rightNode->value.node);
-				// 	printOperations(rightNode->left, depth+1);	
+				case 10: // if
+					printf("IF: ");
+					printTree(rightNode->value.node);
+					printOperations(rightNode->left, depth+1);	
 					
-				// 	if(rightNode->right)
-				// 	{
-				// 		printSpaces(depth);
-				// 		printf("ELSE:");
-				// 		printOperations(rightNode->right, depth+1);
-				// 	}
-				// 	break;
+					if(rightNode->right)
+					{
+						printSpaces(depth);
+						printf("ELSE:");
+						printOperations(rightNode->right, depth+1);
+					}
+					break;
 				// case 11: // while
 				// 	printf("WHILE: ");
 				// 	printTree(rightNode->left);

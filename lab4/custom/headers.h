@@ -7,6 +7,7 @@
 #define _VAR 0
 #define _CONST 1
 #define _ASSIGNMENT_OP 7
+#define _IF_STMT 10
 #define _PRINT_FUNC 12
 #define _FUNC_CALL 14
 #define _ADD_SYM 30

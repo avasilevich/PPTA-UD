@@ -102,7 +102,7 @@ common_line:	  	  	var_declaration
 						}
 						| statement SEMI_COLON		{ $<node>$ = $<node>1; }
 						| print_stmt				{ $<node>$ = $<node>1; }
-						// TODO | if_stmt
+						| if_stmt					{ $<node>$ = $<node>1; }
 						;
 
 
@@ -244,8 +244,7 @@ func_operators:			  { $<node>$ = NULL; }
 						{ 
 							struct Node *operations = getNode(3, $<node>2, $<node>1); 
 							$<node>$ =  operations;
-						}
-						;
+						};
 
 print_stmt: 			PRINT LEFT_BKT VARIABLE RIGHT_BKT SEMI_COLON		
 						{ 
@@ -263,6 +262,21 @@ print_stmt: 			PRINT LEFT_BKT VARIABLE RIGHT_BKT SEMI_COLON
 								$<node>$->value.var = var;
 							}
 						};
+
+if_stmt:				IF LEFT_BKT logic_expr RIGHT_BKT inside_code ELSE inside_code 
+						{
+							$<node>$ = getNode(_IF_STMT, $<node>5, $<node>7);	
+							$<node>$->value.node = $<node>3;
+						}
+						| IF LEFT_BKT logic_expr RIGHT_BKT inside_code
+						{
+							$<node>$ = getNode(_IF_STMT, $<node>5, NULL);	
+							$<node>$->value.node = $<node>3;
+						};
+
+inside_code:			  LEFT_BRACE func_operators RIGHT_BRACE 	{ $<node>$ = $<node>2; }
+					    | common_line 								{ $<node>$ = getNode(3, NULL, $<node>1); }
+					    ;
 
 package:			    PACKAGE PACKAGE_NAME SEMI_COLON;
 
