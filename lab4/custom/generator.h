@@ -10,7 +10,6 @@ void writeClassVarDeclarations(FILE *file);
 void writeMethods(FILE *file);
 void writeMethodOperators(FILE *file, struct Method *method, struct Node *operators);
 void writeLogicTree(FILE *file, struct Method* method, struct Node *root);
-void writeMethodCall(FILE *file, struct Method* func, struct Node* node);
 
 /* implementation */
 int generateCode()
@@ -123,26 +122,28 @@ void writeMethodOperators(FILE *file, struct Method *method, struct Node *operat
 					fprintf(file, "\ncall printf");
 					fprintf(file, "\npop eax\npop eax");
 					break;
-				case _IF_STMT:					
-					writeLogicTree(file, method, rightNode->value.node);
-					int currentCount = ++labelCount;
-					fprintf(file, "\npop eax\ncmp eax, 0");	
+				case _IF_STMT:		
+					{
+						writeLogicTree(file, method, rightNode->value.node);
+						int currentCount = ++labelCount;
+						fprintf(file, "\npop eax\ncmp eax, 0");	
 
-					if(rightNode->right) // if - else
-					{
-						fprintf(file, "\njz ELSE%d", currentCount);
-						writeMethodOperators(file, method, rightNode->left);
-						fprintf(file, "\njmp END%d\nELSE%d:", currentCount, currentCount);
-						writeMethodOperators(file, method, rightNode->right);
-						fprintf(file, "\nEND%d:", currentCount);
-					}
-					else // if
-					{
-						fprintf(file, "\njz END%d", currentCount);
-						writeMethodOperators(file, method, rightNode->left);
-						fprintf(file, "\nEND%d:", currentCount);
-					}
-					break;
+						if(rightNode->right) // if - else
+						{
+							fprintf(file, "\njz ELSE%d", currentCount);
+							writeMethodOperators(file, method, rightNode->left);
+							fprintf(file, "\njmp END%d\nELSE%d:", currentCount, currentCount);
+							writeMethodOperators(file, method, rightNode->right);
+							fprintf(file, "\nEND%d:", currentCount);
+						}
+						else // if
+						{
+							fprintf(file, "\njz END%d", currentCount);
+							writeMethodOperators(file, method, rightNode->left);
+							fprintf(file, "\nEND%d:", currentCount);
+						}
+						break;
+					}			
 				// case 11: // while
 				// {
 				// 	int currentCount = ++labelCount;
@@ -157,9 +158,9 @@ void writeMethodOperators(FILE *file, struct Method *method, struct Node *operat
 				// 	fprintf(file, "\nEnd%d:", currentCount);
 				// 	break;
 				// }
-				// case 14: // function call
-				// 	writeMethodCall(file, func, rightNode);					
-				// 	break;
+				case _CUSTOM_FUNC_CALL:
+					writeLogicTree(file, method, rightNode);					
+					break;
 				// case 16: // break
 				// 	fprintf(file, "\njmp End%d", currentCycle);	
 				// 	break;
@@ -245,9 +246,8 @@ void writeLogicTree(FILE *file, struct Method* method, struct Node *root)
 			writeLogicTree(file, method, root->right);
 			fprintf(file, "\npop ebx\nmov eax, 0\nsub eax, ebx\npush eax");
 			break;
-		case _FUNC_CALL:
-			writeMethodCall(file, method, root);
-			fprintf(file, "\npush eax");
+		case _CUSTOM_FUNC_CALL:
+			fprintf(file, "\ncall %s", root->value.method->name.c_str());
 			break;
 		case _PRINT_FUNC:
 			fprintf(file, "\ncall printf");
@@ -260,9 +260,4 @@ void writeLogicTree(FILE *file, struct Method* method, struct Node *root)
 			fprintf(file, "\npush %d", root->value.constant->value.intValue);
 			break;
 	}
-}
-
-void writeMethodCall(FILE *file, struct Method* func, struct Node* node)
-{
-	fprintf(file, "\ncall %s", node->value.method->name.c_str());
 }

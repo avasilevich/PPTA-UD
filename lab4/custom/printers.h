@@ -96,9 +96,9 @@ void printOperations(struct Node *operations, int depth)
 					printf("PRINT var: ");
 					std::cout << rightNode->value.var->name;
 					break;
-				// case _FUNC_CALL: // function call
-				// 	std::cout << rightNode->value.method->name << "(..)";
-				// 	break;
+				case _CUSTOM_FUNC_CALL:
+					std::cout << rightNode->value.method->name << "(..)";
+					break;
 				default:
 					printTree(rightNode);
 			}
@@ -136,8 +136,8 @@ void printTree(struct Node *root)
 {
 	if(!root) { return; }
 
-	if((root->nodeType < 0) || (root->nodeType > 1 && root->nodeType < _FUNC_CALL) 
-		|| (root->nodeType > _FUNC_CALL && root->nodeType < _ADD_SYM)	|| (root->nodeType > 47)) 
+	if((root->nodeType < 0) || (root->nodeType > 1 && root->nodeType < _CUSTOM_FUNC_CALL) 
+		|| (root->nodeType > _CUSTOM_FUNC_CALL && root->nodeType < _ADD_SYM) || (root->nodeType > 47)) 
 	{
 		return;	
 	} 	
@@ -192,7 +192,7 @@ void printTree(struct Node *root)
 			printf("-");
 			printTree(root->right); 
 			return;
-		case _FUNC_CALL:
+		case _CUSTOM_FUNC_CALL:
 			printf("%s(..)", root->value.method->name.c_str());
 			return;
 		case _VAR:

@@ -28,5 +28,6 @@ public class ClassName {
 		}
 
 		System.out.println(c);
+		this->firstFunc();
 	}
 }

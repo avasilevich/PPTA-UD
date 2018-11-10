@@ -213,6 +213,24 @@ struct Method* getMainMethod()
     return NULL;
 }
 
+struct Method* getMethod(std::string methodName)
+{
+	struct MethodListNode* workNode = methodList;
+
+	while(workNode)
+    {
+		std::string workNodeMethodName = workNode->method->name;
+
+		if(!workNodeMethodName.compare(methodName)) {
+			return workNode->method;			
+		}
+
+        workNode = workNode->next;
+    }
+
+    return NULL;
+}
+
 struct Variable* getLocalVar(std::string varName)
 {
 	struct VarListNode *varListHead = curVarList;

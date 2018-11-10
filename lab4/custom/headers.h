@@ -9,7 +9,7 @@
 #define _ASSIGNMENT_OP 7
 #define _IF_STMT 10
 #define _PRINT_FUNC 12
-#define _FUNC_CALL 14
+#define _CUSTOM_FUNC_CALL 14
 #define _ADD_SYM 30
 #define _SUB_SYM 31
 #define _MUL_SYM 32
@@ -35,6 +35,7 @@ int tempLineIndex = 0;
 struct Node* getNode(char nodeType, struct Node* left, struct Node* right);
 struct Method* addMethod();
 struct Method* getMainMethod();
+struct Method* getMethod(std::string methodName);
 struct VarListNode* addClassVarToList();
 struct VarListNode* addMethodVarToList();
 struct Variable* getLocalVar(std::string varName);

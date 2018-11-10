@@ -237,6 +237,22 @@ addend:					VARIABLE
 							
 							$<node>$ = getNode(_CONST, NULL, NULL);
 							$<node>$->value.constant = constant;
+						}
+						| FUNC_CALL VARIABLE LEFT_BKT RIGHT_BKT
+						{
+							struct Method* method = getMethod(*$<str>2.token);
+							
+							if(method == NULL)	
+							{			
+								std::cout << "line " << $<str>2.index << ": method ";
+								std::cout << *$<str>2.token << " undeclared." << std::endl;
+								errors++;
+							}
+							else
+							{
+								$<node>$ = getNode(_CUSTOM_FUNC_CALL, NULL, NULL);
+								$<node>$->value.method = method;
+							}
 						};
 
 func_operators:			  { $<node>$ = NULL; }
