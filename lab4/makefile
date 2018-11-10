@@ -36,7 +36,3 @@ compile:
 
 clean:
 	rm -rf $(CLEANLIST)
-
-	# elf32     ELF32 (i386) object files (e.g. Linux)
-    # elf64     ELF64 (x86_64) object files (e.g. Linux)
-    # elfx32    ELFX32 (x86_64) object files (e.g. Linux)
