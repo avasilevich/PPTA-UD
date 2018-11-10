@@ -13,7 +13,6 @@ public class ClassName {
 	private void firstFunc() {	
 		int a = 2;
 
-
 		while(a < 5) {
 			a = a + 1;
 		}
