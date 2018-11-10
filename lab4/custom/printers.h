@@ -67,15 +67,7 @@ void printOperations(struct Node *operations, int depth)
 					std::cout << "assignment: " << rightNode->value.var->name << " = ";
 					printTree(rightNode->right);
 					break;
-				// case 9:  // for
-				// 	printf("FOR: ");
-				// 	printTree(rightNode->left); printf("; ");
-				// 	printTree(rightNode->right->left); printf("; ");
-				// 	printTree(rightNode->right->right);
-					
-				// 	printOperations(rightNode->value.node, depth+1);						
-				// 	break;
-				case 10: // if
+				case _IF_STMT:
 					printf("IF: ");
 					printTree(rightNode->value.node);
 					printOperations(rightNode->left, depth+1);	
@@ -87,12 +79,12 @@ void printOperations(struct Node *operations, int depth)
 						printOperations(rightNode->right, depth+1);
 					}
 					break;
-				// case 11: // while
-				// 	printf("WHILE: ");
-				// 	printTree(rightNode->left);
-				// 	printOperations(rightNode->right, depth+1);
-				// 	break;
-				case _PRINT_FUNC: // print
+				case _WHILE_STMT:
+					printf("WHILE: ");
+					printTree(rightNode->left);
+					printOperations(rightNode->right, depth+1);
+					break;
+				case _PRINT_FUNC:
 					printf("PRINT var: ");
 					std::cout << rightNode->value.var->name;
 					break;
@@ -193,7 +185,7 @@ void printTree(struct Node *root)
 			printTree(root->right); 
 			return;
 		case _CUSTOM_FUNC_CALL:
-			printf("%s(..)", root->value.method->name.c_str());
+			printf("call %s()", root->value.method->name.c_str());
 			return;
 		case _VAR:
 			printf("%s", root->value.var->name.c_str());

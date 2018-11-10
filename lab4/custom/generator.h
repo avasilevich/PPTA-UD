@@ -123,51 +123,51 @@ void writeMethodOperators(FILE *file, struct Method *method, struct Node *operat
 					fprintf(file, "\npop eax\npop eax");
 					break;
 				case _IF_STMT:		
-					{
-						writeLogicTree(file, method, rightNode->value.node);
-						int currentCount = ++labelCount;
-						fprintf(file, "\npop eax\ncmp eax, 0");	
+				{
+					writeLogicTree(file, method, rightNode->value.node);
+					int currentCount = ++labelCount;
+					fprintf(file, "\npop eax\ncmp eax, 0");	
 
-						if(rightNode->right) // if - else
-						{
-							fprintf(file, "\njz ELSE%d", currentCount);
-							writeMethodOperators(file, method, rightNode->left);
-							fprintf(file, "\njmp END%d\nELSE%d:", currentCount, currentCount);
-							writeMethodOperators(file, method, rightNode->right);
-							fprintf(file, "\nEND%d:", currentCount);
-						}
-						else // if
-						{
-							fprintf(file, "\njz END%d", currentCount);
-							writeMethodOperators(file, method, rightNode->left);
-							fprintf(file, "\nEND%d:", currentCount);
-						}
-						break;
-					}			
-				// case 11: // while
-				// {
-				// 	int currentCount = ++labelCount;
-				// 	currentCycle = currentCount;
-				// 	fprintf(file, "\nWhile_begin%d:", currentCount);
-				// 	writeLogicTree(file, func, rightNode->left);
-				// 	fprintf(file, "\npop eax\ncmp eax, 0");	
-				// 	fprintf(file, "\njz End%d", currentCount);
+					if(rightNode->right) // if - else
+					{
+						fprintf(file, "\njz ELSE%d", currentCount);
+						writeMethodOperators(file, method, rightNode->left);
+						fprintf(file, "\njmp END%d\nELSE%d:", currentCount, currentCount);
+						writeMethodOperators(file, method, rightNode->right);
+						fprintf(file, "\nEND%d:", currentCount);
+					}
+					else // if
+					{
+						fprintf(file, "\njz END%d", currentCount);
+						writeMethodOperators(file, method, rightNode->left);
+						fprintf(file, "\nEND%d:", currentCount);
+					}
+					break;
+				}			
+				case _WHILE_STMT:
+				{
+					int currentCount = ++labelCount;
+					currentCycle = currentCount;
+
+					fprintf(file, "\nwhile_begin%d:", currentCount);
+					writeLogicTree(file, method, rightNode->left);
+					fprintf(file, "\npop eax\ncmp eax, 0");	
+					fprintf(file, "\njz End%d", currentCount);
 					
-				// 	writeOperators(file, func, rightNode->right);
-				// 	fprintf(file, "\njmp While_begin%d", currentCount);
-				// 	fprintf(file, "\nEnd%d:", currentCount);
-				// 	break;
-				// }
+					writeMethodOperators(file, method, rightNode->right);
+					fprintf(file, "\njmp while_begin%d", currentCount);
+					fprintf(file, "\nEnd%d:", currentCount);
+					break;
+				}
 				case _CUSTOM_FUNC_CALL:
 					writeLogicTree(file, method, rightNode);					
 					break;
-				// case 16: // break
-				// 	fprintf(file, "\njmp End%d", currentCycle);	
-				// 	break;
+				case _BREAK:
+					fprintf(file, "\njmp End%d", currentCycle);	
+					break;
 			}
 		}
 		
-		//----------------------------------------------------
 		workNode = workNode->left;
 	}
 }

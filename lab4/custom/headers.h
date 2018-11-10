@@ -8,8 +8,10 @@
 #define _CONST 1
 #define _ASSIGNMENT_OP 7
 #define _IF_STMT 10
+#define _WHILE_STMT 11
 #define _PRINT_FUNC 12
 #define _CUSTOM_FUNC_CALL 14
+#define _BREAK 16
 #define _ADD_SYM 30
 #define _SUB_SYM 31
 #define _MUL_SYM 32

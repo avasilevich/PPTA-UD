@@ -32,7 +32,7 @@
 %token AND OR NOT BOOLEAN EOL INCREMENT DECREMENT
 %token ADD SUB DIV MUL ASSIGN LEFT_SQUARE_BKT RIGHT_SQUARE_BKT
 %token SUM_AND_EQUAL SUB_AND_EQUAL MUL_AND_EQUAL DIV_AND_EQUAL
-%token IF ELSE FOR WHILE RETURN_ACTION DOT COMMA
+%token IF ELSE FOR WHILE RETURN_ACTION BREAK DOT COMMA
 
 %start parse_tree
 
@@ -103,6 +103,8 @@ common_line:	  	  	var_declaration
 						| statement SEMI_COLON		{ $<node>$ = $<node>1; }
 						| print_stmt				{ $<node>$ = $<node>1; }
 						| if_stmt					{ $<node>$ = $<node>1; }
+						| while_stmt				{ $<node>$ = $<node>1; }
+						| BREAK	SEMI_COLON			{ $<node>$ = getNode(_BREAK, NULL, NULL); }
 						;
 
 
@@ -288,6 +290,11 @@ if_stmt:				IF LEFT_BKT logic_expr RIGHT_BKT inside_code ELSE inside_code
 						{
 							$<node>$ = getNode(_IF_STMT, $<node>5, NULL);	
 							$<node>$->value.node = $<node>3;
+						};
+
+while_stmt:				WHILE LEFT_BKT logic_expr RIGHT_BKT inside_code
+						{
+							$<node>$ = getNode(_WHILE_STMT, $<node>3, $<node>5);	
 						};
 
 inside_code:			  LEFT_BRACE func_operators RIGHT_BRACE 	{ $<node>$ = $<node>2; }

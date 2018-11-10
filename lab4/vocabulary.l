@@ -35,6 +35,7 @@ byte|short|int|long|float|double|char|String|boolean|void	{ yylval.str.token = n
 "else"		return ELSE;
 "for"		return FOR;
 "while"		return WHILE;
+"break"		return BREAK;
 
 "+"			return ADD;
 "-"			return SUB;
