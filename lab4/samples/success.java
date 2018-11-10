@@ -18,7 +18,8 @@ public class ClassName {
 	public static void main() {
 		int b = 3;
 		int c = 1;
-		c = b;
+		c = b + 1;
+		c = c + 10;
 		System.out.println(c);
 	}
 }

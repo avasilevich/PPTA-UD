@@ -1,4 +1,4 @@
-// %debug
+%debug
 
 %{
 	#include "./custom/headers.h"
@@ -240,7 +240,11 @@ addend:					VARIABLE
 						};
 
 func_operators:			  { $<node>$ = NULL; }
-						| func_operators common_line { $<node>$ = getNode(3, $<node>1, $<node>2); }
+						| common_line func_operators  
+						{ 
+							struct Node *operations = getNode(3, $<node>2, $<node>1); 
+							$<node>$ =  operations;
+						}
 						;
 
 print_stmt: 			PRINT LEFT_BKT VARIABLE RIGHT_BKT SEMI_COLON		
@@ -279,7 +283,7 @@ int main(int argc, char **argv)
 		return -1; 
 	}	
 
-	//showClassInfo();
+	showClassInfo();
 	generateCode();
 	return 0;
 }
