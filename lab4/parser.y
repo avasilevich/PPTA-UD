@@ -1,4 +1,4 @@
-%debug
+/*%debug*/
 
 %{
 	#include "./custom/headers.h"
@@ -320,7 +320,7 @@ int main(int argc, char **argv)
 		return -1; 
 	}	
 
-	showClassInfo();
+	//showClassInfo();
 	generateCode();
 	return 0;
 }
